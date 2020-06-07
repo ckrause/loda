@@ -1,0 +1,17 @@
+nop,0
+mov,63111
+add,41467
+sub,28848
+mul,12165
+div,4709
+mod,1420
+pow,4056
+log,13
+fac,125
+gcd,1371
+bin,670
+cmp,296
+lpb,14583
+lpe,14583
+clr,289
+dbg,0

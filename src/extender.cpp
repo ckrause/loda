@@ -4,14 +4,15 @@
 
 void add_or_sub( Program &p, int c )
 {
-  if ( c > 0 )
+  if ( c != 0 )
   {
     p.push_back( Operation::Type::ADD, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, c );
   }
-  else if ( c < 0 )
-  {
-    p.push_back( Operation::Type::SUB, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, -c );
-  }
+  // TODO: use sub when it's semantics is fixed
+//  else if ( c < 0 )
+//  {
+//    p.push_back( Operation::Type::SUB, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, -c );
+//  }
 }
 
 bool Extender::linear1( Program &p, line_t inverse, line_t target )
@@ -20,21 +21,21 @@ bool Extender::linear1( Program &p, line_t inverse, line_t target )
   {
     return true;
   }
-  if ( inverse.offset > 0 )
+  if ( inverse.offset != 0 )
   {
-    p.push_back( Operation::Type::SUB, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, inverse.offset );
+    add_or_sub( p, -inverse.offset );
   }
-  if ( inverse.factor > 1 )
+  if ( inverse.factor != 1 )
   {
     p.push_back( Operation::Type::DIV, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, inverse.factor );
   }
-  if ( target.factor > 1 )
+  if ( target.factor != 1 )
   {
     p.push_back( Operation::Type::MUL, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, target.factor );
   }
-  if ( target.offset > 0 )
+  if ( target.offset != 0 )
   {
-    p.push_back( Operation::Type::ADD, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, target.offset );
+    add_or_sub( p, target.offset );
   }
   return true;
 }
@@ -45,12 +46,12 @@ bool Extender::linear2( Program &p, line_t inverse, line_t target )
   {
     return true;
   }
-  if ( inverse.factor > 1 )
+  if ( inverse.factor != 1 )
   {
     p.push_back( Operation::Type::DIV, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, inverse.factor );
   }
   add_or_sub( p, target.offset - inverse.offset );
-  if ( target.factor > 1 )
+  if ( target.factor != 1 )
   {
     p.push_back( Operation::Type::MUL, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, target.factor );
   }

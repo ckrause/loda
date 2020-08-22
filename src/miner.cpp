@@ -127,8 +127,7 @@ void Miner::mine( volatile sig_atomic_t &exit_flag )
     settings_labels.emplace( "program_template", settings.program_template );
   }
 
-  std::map<std::string, std::string> matcher_labels;
-  const size_t num_matchers = oeis.getMatchers().size();
+  auto &finder = oeis.getFinder();
 
   Generator generator( settings, std::random_device()() );
   std::stack<Program> progs;
@@ -146,7 +145,7 @@ void Miner::mine( volatile sig_atomic_t &exit_flag )
     }
     Program program = progs.top();
     progs.pop();
-    auto seq_programs = oeis.findSequence( program, norm_seq );
+    auto seq_programs = finder.findSequence( program, norm_seq, oeis.getSequences() );
     for ( auto s : seq_programs )
     {
       auto r = oeis.updateProgram( s.first, s.second );
@@ -160,7 +159,7 @@ void Miner::mine( volatile sig_atomic_t &exit_flag )
         {
           updated++;
         }
-        if ( progs.size() < 1000 )
+        if ( progs.size() < 1000 || settings.hasMemory() )
         {
           generator.mutateConstants( s.second, 100, progs );
         }
@@ -183,23 +182,7 @@ void Miner::mine( volatile sig_atomic_t &exit_flag )
       generated = 0;
       fresh = 0;
       updated = 0;
-      for ( size_t i = 0; i < num_matchers; i++ )
-      {
-        matcher_labels["matcher"] = oeis.getMatchers()[i]->getName();
-        matcher_labels["type"] = "candidate";
-        Metrics::get().write( "matches", matcher_labels, oeis.getMatcherStats()[i].candidates );
-        matcher_labels["type"] = "false_positive";
-        Metrics::get().write( "matches", matcher_labels, oeis.getMatcherStats()[i].false_positives );
-        matcher_labels["type"] = "error";
-        Metrics::get().write( "matches", matcher_labels, oeis.getMatcherStats()[i].errors );
-        matcher_labels["type"] = "success";
-        Metrics::get().write( "matches", matcher_labels,
-            oeis.getMatcherStats()[i].candidates - oeis.getMatcherStats()[i].false_positives
-                - oeis.getMatcherStats()[i].errors );
-        oeis.getMatcherStats()[i].candidates = 0;
-        oeis.getMatcherStats()[i].false_positives = 0;
-        oeis.getMatcherStats()[i].errors = 0;
-      }
+      finder.publishMetrics();
     }
   }
 }
@@ -215,6 +198,7 @@ void Miner::synthesize( volatile sig_atomic_t &exit_flag )
   synthesizers[1].reset( new PeriodicSynthesizer() );
   Program program;
   size_t found = 0;
+  auto &finder = oeis.getFinder();
   for ( auto &synthesizer : synthesizers )
   {
     for ( auto &seq : oeis.getSequences() )
@@ -237,7 +221,7 @@ void Miner::synthesize( volatile sig_atomic_t &exit_flag )
         }
       }
     }
-    for ( auto &matcher : oeis.getMatchers() )
+    for ( auto &matcher : finder.getMatchers() )
     {
       for ( auto &reduced : matcher->getReducedSequences() )
       {
@@ -252,7 +236,7 @@ void Miner::synthesize( volatile sig_atomic_t &exit_flag )
         if ( synthesizer->synthesize( reduced.first, program ) )
         {
           Sequence seq;
-          auto progs = oeis.findSequence( program, seq );
+          auto progs = finder.findSequence( program, seq, oeis.getSequences() );
           for ( auto &p : progs )
           {
             Log::get().debug( "Synthesized program for " + OeisSequence( p.first ).to_string() );

@@ -248,6 +248,7 @@ bool Optimizer::simplifyOperations( Program &p, size_t num_initialized_cells ) c
     case Operation::Type::MOV:
     case Operation::Type::ADD:
     case Operation::Type::SUB:
+    case Operation::Type::TRU:
     case Operation::Type::MUL:
     case Operation::Type::DIV:
     case Operation::Type::MOD:
@@ -546,6 +547,9 @@ update_state doPartialEval( Operation &op, std::unordered_map<number_t, Operand>
     break;
   case Operation::Type::SUB:
     target.value = Semantics::sub( target.value, source.value );
+    break;
+  case Operation::Type::TRU:
+    target.value = Semantics::tru( target.value, source.value );
     break;
   case Operation::Type::MUL:
     target.value = Semantics::mul( target.value, source.value );

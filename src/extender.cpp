@@ -4,15 +4,14 @@
 
 void add_or_sub( Program &p, int c )
 {
-  if ( c != 0 )
+  if ( c > 0 )
   {
     p.push_back( Operation::Type::ADD, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, c );
   }
-  // TODO: use sub when it's semantics is fixed
-//  else if ( c < 0 )
-//  {
-//    p.push_back( Operation::Type::SUB, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, -c );
-//  }
+  else if ( c < 0 )
+  {
+    p.push_back( Operation::Type::SUB, Operand::Type::DIRECT, 1, Operand::Type::CONSTANT, -c );
+  }
 }
 
 bool Extender::linear1( Program &p, line_t inverse, line_t target )

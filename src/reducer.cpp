@@ -22,11 +22,11 @@ int Reducer::shrink( Sequence &seq )
     {
       if ( factor == NUM_INF )
       {
-        factor = seq[i];
+        factor = std::abs( seq[i] );
       }
       else
       {
-        factor = Semantics::gcd( factor, seq[i] );
+        factor = Semantics::gcd( factor, std::abs( seq[i] ) );
       }
     }
   }

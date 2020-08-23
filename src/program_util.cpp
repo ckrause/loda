@@ -20,6 +20,20 @@ void ProgramUtil::removeOps( Program &p, Operation::Type type )
   }
 }
 
+bool ProgramUtil::replaceOps( Program &p, Operation::Type oldType, Operation::Type newType )
+{
+  bool result = false;
+  for ( Operation &op : p.ops )
+  {
+    if ( op.type == oldType )
+    {
+      op.type = newType;
+      result = true;
+    }
+  }
+  return result;
+}
+
 size_t ProgramUtil::numOps( const Program &p, bool withNops )
 {
   if ( withNops )

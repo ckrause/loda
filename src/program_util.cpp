@@ -54,6 +54,19 @@ size_t ProgramUtil::numOps( const Program &p, bool withNops )
   }
 }
 
+size_t ProgramUtil::numOps( const Program &p, Operation::Type type )
+{
+  size_t num_ops = 0;
+  for ( auto &op : p.ops )
+  {
+    if ( op.type == type )
+    {
+      num_ops++;
+    }
+  }
+  return num_ops;
+}
+
 size_t ProgramUtil::numOps( const Program &p, Operand::Type type )
 {
   size_t num_ops = 0;

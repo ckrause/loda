@@ -38,6 +38,8 @@ public:
 
   static size_t numOps( const Program &p, bool withNops );
 
+  static size_t numOps( const Program &p, Operation::Type type );
+
   static size_t numOps( const Program &p, Operand::Type type );
 
   static void print( const Program &p, std::ostream &out );

@@ -588,6 +588,12 @@ std::string Oeis::isOptimizedBetter( Program existing, Program optimized ) const
     return "Simpler";
   }
 
+  // we prefer sub over tru
+  if ( ProgramUtil::numOps( optimized, Operation::Type::TRU ) < ProgramUtil::numOps( existing, Operation::Type::TRU ) )
+  {
+    return "Simpler";
+  }
+
   // now remove nops...
   optimizer.removeNops( existing );
   optimizer.removeNops( optimized );

@@ -98,11 +98,11 @@ size_t Interpreter::run( const Program &p, Memory &mem ) const
       set( op.target, Semantics::sub( target, source ), mem );
       break;
     }
-    case Operation::Type::TRU:
+    case Operation::Type::TRN:
     {
       source = get( op.source, mem );
       target = get( op.target, mem );
-      set( op.target, Semantics::tru( target, source ), mem );
+      set( op.target, Semantics::trn( target, source ), mem );
       break;
     }
     case Operation::Type::MUL:

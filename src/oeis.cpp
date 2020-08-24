@@ -588,8 +588,8 @@ std::string Oeis::isOptimizedBetter( Program existing, Program optimized ) const
     return "Simpler";
   }
 
-  // we prefer sub over tru
-  if ( ProgramUtil::numOps( optimized, Operation::Type::TRU ) < ProgramUtil::numOps( existing, Operation::Type::TRU ) )
+  // we prefer sub over trn
+  if ( ProgramUtil::numOps( optimized, Operation::Type::TRN ) < ProgramUtil::numOps( existing, Operation::Type::TRN ) )
   {
     return "Simpler";
   }
@@ -724,7 +724,7 @@ void Oeis::maintain( volatile sig_atomic_t &exit_flag )
       }
       if ( !is_okay )
       {
-        if ( ProgramUtil::replaceOps( program, Operation::Type::SUB, Operation::Type::TRU ) )
+        if ( ProgramUtil::replaceOps( program, Operation::Type::SUB, Operation::Type::TRN ) )
         {
           Log::get().warn( "Replacing subtraction in program for " + s.to_string() );
           dumpProgram( s.id, program, file_name );

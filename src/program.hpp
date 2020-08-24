@@ -46,7 +46,7 @@ public:
     MOV,
     ADD,
     SUB,
-    TRU,
+    TRN,
     MUL,
     DIV,
     MOD,

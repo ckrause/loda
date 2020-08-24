@@ -25,7 +25,7 @@ void Minimizer::minimize( Program &p, size_t num_terms ) const
     {
       continue;
     }
-    else if ( op.type == Operation::Type::TRU )
+    else if ( op.type == Operation::Type::TRN )
     {
       p.ops.at( i ).type = Operation::Type::SUB;
       bool can_replace;

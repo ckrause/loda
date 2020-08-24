@@ -22,7 +22,7 @@ number_t Semantics::sub( number_t a, number_t b )
   return add( a, -b );
 }
 
-number_t Semantics::tru( number_t a, number_t b )
+number_t Semantics::trn( number_t a, number_t b )
 {
   CHECK_INF2( a, b );
   return std::max<number_t>( add( a, -b ), 0 );

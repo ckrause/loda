@@ -5,7 +5,11 @@
 
 int Reducer::truncate( Sequence &seq )
 {
-  int offset = seq.min( false );
+  auto offset = seq.min( false );
+  if ( offset == 0 || offset == NUM_INF )
+  {
+    return 0;
+  }
   for ( size_t i = 0; i < seq.size(); i++ )
   {
     seq[i] = seq[i] - offset;

@@ -3,7 +3,7 @@
 #include "semantics.hpp"
 #include "util.hpp"
 
-int Reducer::truncate( Sequence &seq )
+number_t Reducer::truncate( Sequence &seq )
 {
   auto offset = seq.min( false );
   if ( offset == 0 || offset == NUM_INF )
@@ -17,7 +17,7 @@ int Reducer::truncate( Sequence &seq )
   return offset;
 }
 
-int Reducer::shrink( Sequence &seq )
+number_t Reducer::shrink( Sequence &seq )
 {
   number_t factor = NUM_INF;
   for ( size_t i = 0; i < seq.size(); i++ )

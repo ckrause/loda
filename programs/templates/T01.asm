@@ -1,4 +1,4 @@
-mov $2,2
+mov $2,5
 lpb $0,1
   div $0,$2
 lpe

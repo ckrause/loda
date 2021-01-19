@@ -16,8 +16,26 @@
 #include <stack>
 #include <unistd.h>
 
-using MemStack = std::stack<Memory>;
-using SizeStack = std::stack<size_t>;
+class LoopInfo
+{
+public:
+  LoopInfo( size_t pc, size_t frag_length, const Memory &mem, const Memory &frag )
+      :
+      pc( pc ),
+      frag_length( frag_length ),
+      mem( mem ),
+      frag( frag )
+  {
+  }
+
+  size_t pc;
+  size_t frag_length;
+  Memory mem;
+  Memory frag;
+};
+
+using PCStack = std::stack<size_t>;
+using LoopStack = std::stack<LoopInfo>;
 
 Interpreter::Interpreter( const Settings &settings )
     :
@@ -103,18 +121,16 @@ size_t Interpreter::run( const Program &p, Memory &mem )
   }
 
   // define stacks
-  SizeStack pc_stack;
-  SizeStack loop_stack;
-  SizeStack frag_length_stack;
-  MemStack mem_stack;
-  MemStack frag_stack;
+  PCStack pc_stack;
+  LoopStack loop_stack;
 
   // push first operation to stack
   pc_stack.push( 0 );
 
   size_t cycles = 0;
-  Memory old_mem, frag, frag_prev, prev;
-  size_t pc, pc_next, ps_begin;
+  LoopInfo prev;
+  Memory old_mem, frag;
+  size_t pc, pc_next;
   number_t source = 0, target = 0;
   number_t start, length, length2;
   Operation lpb;
@@ -155,24 +171,14 @@ size_t Interpreter::run( const Program &p, Memory &mem )
         throw std::runtime_error( "Maximum stack size exceeded: " + std::to_string( loop_stack.size() ) );
       }
       frag = mem.fragment( start, length, true );
-      loop_stack.push( pc );
-      mem_stack.push( mem );
-      frag_stack.push( frag );
-      frag_length_stack.push( length );
+      loop_stack.push( LoopInfo( pc, length, mem, frag ) );
       break;
     }
     case Operation::Type::LPE:
     {
-      ps_begin = loop_stack.top();
-      lpb = p.ops[ps_begin];
-      prev = mem_stack.top();
-      mem_stack.pop();
-
-      frag_prev = frag_stack.top();
-      frag_stack.pop();
-
-      length = frag_length_stack.top();
-      frag_length_stack.pop();
+      prev = loop_stack.top();
+      loop_stack.pop();
+      lpb = p.ops[prev.pc];
 
       start = get( lpb.target, mem, true );
       length2 = get( lpb.source, mem );
@@ -181,17 +187,14 @@ size_t Interpreter::run( const Program &p, Memory &mem )
 
       frag = mem.fragment( start, length, true );
 
-      if ( frag.is_less( frag_prev, length ) )
+      if ( frag.is_less( prev.frag, length ) )
       {
-        pc_next = ps_begin + 1;
-        mem_stack.push( mem );
-        frag_stack.push( frag );
-        frag_length_stack.push( length );
+        pc_next = prev.pc + 1;
+        loop_stack.push( LoopInfo( pc_next, length, mem, frag ) );
       }
       else
       {
         mem = prev;
-        loop_stack.pop();
       }
       break;
     }

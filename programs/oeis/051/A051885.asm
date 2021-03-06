@@ -11,7 +11,7 @@ lpb $7
   lpb $0
     sub $0,1
     add $3,9
-    fac $4
+    cal $4,142
     mov $5,$0
     mod $0,$4
     div $5,$3

@@ -23,7 +23,7 @@ lpb $5
     lpe
     mod $0,4
     sub $0,2
-    fac $0
+    cal $0,142
     mov $3,6
     pow $3,$0
     mov $0,1

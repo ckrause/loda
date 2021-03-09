@@ -261,7 +261,7 @@ bool loadBFile( size_t id, size_t num_terms, const Sequence& seq_full, Sequence&
 Sequence OeisSequence::getTerms( int64_t max_num_terms ) const
 {
   size_t real_max_terms = (max_num_terms >= 0) ? max_num_terms : 10000; // magic number
-  if ( !attempted_bfile )
+  if ( real_max_terms > full.size() && !attempted_bfile )
   {
     attempted_bfile = true;
     if ( id != 0 )

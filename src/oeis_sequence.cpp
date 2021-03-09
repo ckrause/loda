@@ -242,6 +242,13 @@ bool loadBFile( size_t id, size_t num_terms, const Sequence& seq_full, Sequence&
     return false;
   }
 
+  // shrink big sequence to maximum number of terms
+  if ( seq_big.size() > OeisSequence::VERY_LONG_SEQ_LENGTH )
+  {
+    seq_big = Sequence(
+        std::vector<number_t>( seq_big.begin(), seq_big.begin() + OeisSequence::VERY_LONG_SEQ_LENGTH ) );
+  }
+
   if ( Log::get().level == Log::Level::DEBUG )
   {
     Log::get().debug(

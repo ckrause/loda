@@ -94,7 +94,7 @@ std::string OeisSequence::getBFilePath() const
   return getHome() + "b/" + dir_str() + "/" + id_str( "b" ) + ".txt";
 }
 
-bool loadBFile( size_t id, size_t num_terms, const Sequence& seq_full, Sequence& seq_big )
+bool loadBFile( size_t id, const Sequence& seq_full, Sequence& seq_big )
 {
   const OeisSequence oeis_seq( id );
   bool has_b_file = false;
@@ -214,7 +214,7 @@ bool loadBFile( size_t id, size_t num_terms, const Sequence& seq_full, Sequence&
     seq_big = seq_full;
   }
 
-  if ( seq_big.size() < num_terms && !has_overflow )
+  if ( seq_big.size() < OeisSequence::LONG_SEQ_LENGTH && !has_overflow )
   {
     error_state = "too short";
   }
@@ -267,7 +267,7 @@ Sequence OeisSequence::getTerms( int64_t max_num_terms ) const
     if ( id != 0 )
     {
       Sequence big;
-      if ( loadBFile( id, real_max_terms, full, big ) )
+      if ( loadBFile( id, full, big ) )
       {
         // use data from big sequence from now on
         loaded_bfile = true;

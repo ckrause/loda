@@ -23,7 +23,7 @@ struct pair_hasher
 {
   std::size_t operator()( const std::pair<number_t, number_t> &p ) const
   {
-    return p.first ^ p.second;
+    return (p.first << 32) ^ p.second;
   }
 };
 
@@ -51,7 +51,7 @@ private:
 
   std::pair<number_t, number_t> call( number_t id, number_t arg );
 
-  Program getProgram( number_t id );
+  const Program& getProgram( number_t id );
 
   const Settings &settings;
 

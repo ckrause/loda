@@ -438,7 +438,7 @@ std::pair<number_t, number_t> Interpreter::call( number_t id, number_t arg )
   }
 
   // check if program exists
-  auto call_program = getProgram( id );
+  auto& call_program = getProgram( id );
 
   // check for recursive calls
   if ( running_programs.find( id ) != running_programs.end() )
@@ -475,7 +475,7 @@ std::pair<number_t, number_t> Interpreter::call( number_t id, number_t arg )
   return result;
 }
 
-Program Interpreter::getProgram( number_t id )
+const Program& Interpreter::getProgram( number_t id )
 {
   if ( missing_programs.find( id ) != missing_programs.end() )
   {
@@ -485,12 +485,9 @@ Program Interpreter::getProgram( number_t id )
   {
     Parser parser;
     auto path = OeisSequence( id ).getProgramPath();
-    Program program;
     try
     {
-      program = parser.parse( path );
-      program_cache[id] = program;
-      return program;
+      program_cache[id] = parser.parse( path );
     }
     catch ( ... )
     {

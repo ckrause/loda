@@ -4,6 +4,7 @@
 #include "program_util.hpp"
 #include "stats.hpp"
 
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 

@@ -1,6 +1,8 @@
 # LODA Statistics
 
-This folder contains various statistics extracted from the existing LODA programs. There are also some charts showing a small subset of them.
+The `loda` comand-line tool automatically generates and maintains statistics
+of all programs in the folder `$HOME/.loda/stats`. Below you can find some charts
+showing a small subset of the statistics.
 
 ![History of program mining](program_counts.png)
 

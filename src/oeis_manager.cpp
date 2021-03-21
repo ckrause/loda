@@ -15,11 +15,8 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
-#include <sys/stat.h>
 #include <stdlib.h>
-#include <sys/file.h>
 #include <time.h>
-#include <unistd.h>
 
 void throwParseError( const std::string &line )
 {
@@ -47,19 +44,7 @@ void OeisManager::load()
 
   {
     // obtain lock
-    ensureDir( OeisSequence::getHome() );
-    std::string lockfile = OeisSequence::getHome() + "lock";
-    int fd = 0;
-    while ( true )
-    {
-      fd = open( lockfile.c_str(), O_CREAT, 0644 );
-      flock( fd, LOCK_EX );
-      struct stat st0, st1;
-      fstat( fd, &st0 );
-      stat( lockfile.c_str(), &st1 );
-      if ( st0.st_ino == st1.st_ino ) break;
-      close( fd );
-    }
+    FolderLock lock( OeisSequence::getHome() );
 
     // update index if needed
     update();
@@ -70,10 +55,10 @@ void OeisManager::load()
     loadNames();
     loadDenylist();
 
-    // remove lock
-    unlink( lockfile.c_str() );
-    flock( fd, LOCK_UN );
+    // lock released at the end of this block
   }
+
+  return;
 
   // collect known / linear sequences if they should be ignored
   std::vector<number_t> seqs_to_remove;

@@ -58,8 +58,6 @@ void OeisManager::load()
     // lock released at the end of this block
   }
 
-  return;
-
   // collect known / linear sequences if they should be ignored
   std::vector<number_t> seqs_to_remove;
   for ( auto &seq : sequences )

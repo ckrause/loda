@@ -260,7 +260,7 @@ void Test::stats()
   {
     Log::get().error( "Error loading operation position counts from stats" );
   }
-  if ( !s.found_programs.at( 4 ) || !s.cached_b_files.at( 4 ) )
+  if ( !s.found_programs.at( 4 ) )
   {
     Log::get().error( "Error loading program summary from stats" );
   }

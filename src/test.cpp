@@ -225,9 +225,12 @@ void Test::stats()
 {
   Log::get().info( "Testing stats loading and saving" );
 
+  Settings settings;
+  OeisManager manager( settings );
+
   // load stats
   Stats s, t;
-  s.load( "stats" );
+  s = manager.getStats();
 
   // sanity check for loaded stats
   if ( s.num_constants.at( 1 ) == 0 )

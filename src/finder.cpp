@@ -54,7 +54,7 @@ void Finder::remove( const Sequence &norm_seq, size_t id )
   }
 }
 
-Matcher::seq_programs_t Finder::findSequence( const Program &p, Sequence &norm_seq,
+Matcher::seq_programs_t Finder::findSequence( Program p, Sequence &norm_seq,
     const std::vector<OeisSequence> &sequences )
 {
   // update memory usage info
@@ -71,10 +71,19 @@ Matcher::seq_programs_t Finder::findSequence( const Program &p, Sequence &norm_s
   int64_t max_index = 20; // magic number
   number_t largest_used_cell;
   tmp_used_cells.clear();
-  if ( ProgramUtil::getUsedMemoryCells( p, tmp_used_cells, largest_used_cell, settings.max_memory )
-      && largest_used_cell <= 100 )
+  if ( ProgramUtil::getUsedMemoryCells( p, tmp_used_cells, largest_used_cell, settings.max_memory ) )
   {
-    max_index = largest_used_cell;
+    // inject mov instructions to save
+    for ( size_t i = 0; i < p.ops.size(); i++ )
+    {
+      if ( ProgramUtil::isArithmetic( p.ops[i].type ) && p.ops[i].target.type == Operand::Type::DIRECT )
+      {
+        p.ops.insert( p.ops.begin() + i + 1,
+            Operation( Operation::Type::MOV, Operand( Operand::Type::DIRECT, ++largest_used_cell ), p.ops[i].target ) );
+        i++;
+      }
+    }
+    max_index = std::min<number_t>( largest_used_cell, 200 );
   }
 
   // interpret program

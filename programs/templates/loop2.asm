@@ -1,4 +1,6 @@
 lpb $0
+  sub $0,1
 lpe
-lpb $1
+lpb $2
+  sub $2,1
 lpe

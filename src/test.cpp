@@ -188,7 +188,7 @@ void Test::steps()
   }
 }
 
-void checkSeq( const Sequence& s, size_t expected_size, size_t index, size_t expected_value )
+void checkSeq( const Sequence& s, size_t expected_size, size_t index, number_t expected_value )
 {
   if ( s.size() != expected_size )
   {

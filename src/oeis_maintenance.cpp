@@ -148,10 +148,10 @@ size_t OeisMaintenance::checkAndMinimizePrograms()
       try
       {
         program = parser.parse( program_file );
-        auto very_long_seq = s.getTerms( OeisSequence::EXTENDED_SEQ_LENGTH );
+        auto extended_seq = s.getTerms( OeisSequence::EXTENDED_SEQ_LENGTH );
 
         // check its correctness
-        auto check = interpreter.check( program, very_long_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
+        auto check = interpreter.check( program, extended_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
         is_okay = (check.first != status_t::ERROR); // we allow warnings
 
         // check if it is on the deny list

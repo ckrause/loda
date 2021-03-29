@@ -538,13 +538,13 @@ std::pair<bool, Program> OeisManager::minimizeAndCheck( const Program &p, const 
   std::pair<bool, Program> result;
   result.second = p;
 
-  auto very_long_seq = seq.getTerms( OeisSequence::EXTENDED_SEQ_LENGTH );
+  auto extended_seq = seq.getTerms( OeisSequence::EXTENDED_SEQ_LENGTH );
 
   if ( minimize )
   {
     // minimize for default number of terms
     minimizer.optimizeAndMinimize( result.second, 2, 1, OeisSequence::DEFAULT_SEQ_LENGTH ); // default length
-    check = interpreter.check( result.second, very_long_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
+    check = interpreter.check( result.second, extended_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
     result.first = (check.first != status_t::ERROR); // we allow warnings
     if ( result.first )
     {
@@ -554,7 +554,7 @@ std::pair<bool, Program> OeisManager::minimizeAndCheck( const Program &p, const 
     // minimize for extended number of terms
     result.second = p;
     minimizer.optimizeAndMinimize( result.second, 2, 1, OeisSequence::EXTENDED_SEQ_LENGTH ); // extended length
-    check = interpreter.check( result.second, very_long_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
+    check = interpreter.check( result.second, extended_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
     result.first = (check.first != status_t::ERROR); // we allow warnings
     if ( result.first )
     {
@@ -564,7 +564,7 @@ std::pair<bool, Program> OeisManager::minimizeAndCheck( const Program &p, const 
 
   // check w/o minimization
   result.second = p;
-  check = interpreter.check( p, very_long_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
+  check = interpreter.check( p, extended_seq, OeisSequence::DEFAULT_SEQ_LENGTH );
   result.first = (check.first != status_t::ERROR); // we allow warnings
 
   // log error in case minimization did not yield correct result

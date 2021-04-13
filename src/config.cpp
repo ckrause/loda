@@ -20,21 +20,22 @@ bool get_jbool( jute::jValue &v, const std::string &key, bool def )
   return def;
 }
 
-LODAConfig::LODAConfig( const Settings& settings )
+std::string get_file_as_string( const std::string& filename )
 {
-  // TODO: get this from the miner config
-  overwrite = settings.optimize_existing_programs;
-
-  std::ifstream in( settings.loda_config );
+  std::ifstream in( filename );
   std::string str = "";
   std::string tmp;
   while ( getline( in, tmp ) )
   {
     str += tmp;
   }
-  auto spec = jute::parser::parse( str );
-  auto generators = spec["generators"];
-  auto gens = settings.optimize_existing_programs ? generators["update"] : generators["new"];
+  in.close();
+  return str;
+}
+
+std::vector<Generator::Config> loadGeneratorConfigs( jute::jValue &gens )
+{
+  std::vector<Generator::Config> generators;
   for ( int i = 0; i < gens.size(); i++ )
   {
     auto g = gens[i];
@@ -55,7 +56,7 @@ LODAConfig::LODAConfig( const Settings& settings )
     case jute::jType::JSTRING:
     {
       c.program_template = g["template"].as_string();
-      generator_configs.push_back( c );
+      generators.push_back( c );
       break;
     }
     case jute::jType::JARRAY:
@@ -66,17 +67,66 @@ LODAConfig::LODAConfig( const Settings& settings )
         if ( a[i].get_type() == jute::jType::JSTRING )
         {
           c.program_template = a[i].as_string();
-          generator_configs.push_back( c );
+          generators.push_back( c );
         }
       }
       break;
     }
     default:
     {
-      generator_configs.push_back( c );
+      generators.push_back( c );
       break;
     }
     }
   }
-  Log::get().debug( "Loaded " + std::to_string( generator_configs.size() ) + " generator configurations" );
+  return generators;
+}
+
+Miner::Config ConfigLoader::load( const Settings& settings )
+{
+  Miner::Config config;
+
+  auto str = get_file_as_string( settings.loda_config );
+  auto spec = jute::parser::parse( str );
+  auto miners = spec["miners"];
+
+  bool found = false;
+  for ( int i = 0; i < miners.size(); i++ )
+  {
+    auto m = miners[i];
+    auto name = m["name"].as_string();
+    if ( name == settings.miner )
+    {
+      config.name = name;
+      config.overwrite = get_jbool( m, "overwrite", false );
+      bool backoff = get_jbool( m, "backoff", true );
+      auto matchers = m["matchers"];
+      for ( int j = 0; j < matchers.size(); j++ )
+      {
+        Matcher::Config mc;
+        mc.backoff = backoff;
+        auto a = matchers[i];
+        mc.type = a.as_string();
+      }
+
+      std::vector<std::string> gen_names;
+
+      auto gens = spec["generators"];
+
+      config.generators = loadGeneratorConfigs( gens );
+
+      found = true;
+      break;
+
+    }
+  }
+  if ( !found )
+  {
+    Log::get().error( "Miner config not found: " + settings.miner, true );
+  }
+
+  Log::get().debug(
+      "Loaded miner config \"" + config.name + "\" with " + std::to_string( config.generators.size() )
+          + " generators" );
+  return config;
 }

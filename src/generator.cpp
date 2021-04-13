@@ -347,7 +347,7 @@ void Generator::ensureMeaningfulLoops( Program &p )
 MultiGenerator::MultiGenerator( const Settings &settings, const Stats& stats, int64_t seed )
 {
   std::mt19937 gen( seed );
-  LODAConfig config( settings );
+  ConfigLoader config( settings );
   configs = config.generator_configs;
   if ( configs.empty() )
   {

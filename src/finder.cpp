@@ -1,5 +1,6 @@
 #include "finder.hpp"
 
+#include "config.hpp"
 #include "number.hpp"
 #include "oeis_sequence.hpp"
 #include "program_util.hpp"
@@ -12,7 +13,7 @@ Finder::Finder( const Settings &settings )
       interpreter( settings ),
       num_find_attempts( 0 )
 {
-  LODAConfig config( settings );
+  ConfigLoader config( settings );
 
   // TODO: replace with miner config
   if ( config.overwrite )

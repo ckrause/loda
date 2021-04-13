@@ -351,7 +351,7 @@ void Test::config()
 {
   Log::get().info( "Testing config" );
   Settings settings;
-  LODAConfig config( settings );
+  ConfigLoader config( settings );
   check_int( "numGenerators", 2, 20, config.generator_configs.size() );
   for ( auto &c : config.generator_configs )
   {

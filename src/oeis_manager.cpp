@@ -31,7 +31,7 @@ std::string getStatsHome()
 
 OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
     : settings( settings ),
-      overwrite( force_overwrite || settings.optimize_existing_programs ),
+      overwrite( force_overwrite || settings.optimize_existing_programs ), // TODO: use miner config
       interpreter( settings ),
       finder( settings ),
       minimizer( settings ),

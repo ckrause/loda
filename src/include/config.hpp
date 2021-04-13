@@ -7,6 +7,7 @@ public:
 
   LODAConfig( const Settings& settings );
 
+  bool overwrite;
   std::vector<Generator::Config> generator_configs;
 
 };

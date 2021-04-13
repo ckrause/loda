@@ -22,6 +22,9 @@ bool get_jbool( jute::jValue &v, const std::string &key, bool def )
 
 LODAConfig::LODAConfig( const Settings& settings )
 {
+  // TODO: get this from the miner config
+  overwrite = settings.optimize_existing_programs;
+
   std::ifstream in( settings.loda_config );
   std::string str = "";
   std::string tmp;

@@ -12,7 +12,10 @@ Finder::Finder( const Settings &settings )
       interpreter( settings ),
       num_find_attempts( 0 )
 {
-  if ( settings.optimize_existing_programs )
+  LODAConfig config( settings );
+
+  // TODO: replace with miner config
+  if ( config.overwrite )
   {
     matchers.resize( 3 );
     matchers[0].reset( new DirectMatcher( false ) );

@@ -29,8 +29,9 @@ std::string getStatsHome()
   return getLodaHome() + "stats";
 }
 
-OeisManager::OeisManager( const Settings &settings )
+OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
     : settings( settings ),
+      overwrite( force_overwrite || settings.optimize_existing_programs ),
       interpreter( settings ),
       finder( settings ),
       minimizer( settings ),
@@ -69,7 +70,7 @@ void OeisManager::load()
 
   // try to load stats to speed up the removal of existing programs
   // DISABLED BECAUSE IT CAN LEAD TO DEADLOCKS
-  //if ( !settings.optimize_existing_programs )
+  //if ( !overwrite )
   //{
   //  std::ifstream stats_file( stats.getMainStatsFile( getStatsHome() ) );
   //  if ( stats_file.good() )
@@ -96,7 +97,7 @@ void OeisManager::load()
     }
 
     // if not overwriting existing programs...
-    if ( !settings.optimize_existing_programs )
+    if ( !overwrite )
     {
       // linear sequence?
       auto terms = seq.getTerms( settings.num_terms );
@@ -725,7 +726,7 @@ std::pair<bool, bool> OeisManager::updateProgram( size_t id, const Program &p )
     std::ifstream in( file_name );
     if ( in.good() )
     {
-      if ( settings.optimize_existing_programs )
+      if ( overwrite )
       {
         is_new = false;
         Parser parser;

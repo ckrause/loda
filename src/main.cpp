@@ -193,8 +193,6 @@ int main( int argc, char *argv[] )
     }
     else if ( cmd == "maintain" )
     {
-      // need to set the override flag!
-      settings.optimize_existing_programs = true;
       OeisMaintenance maintenance( settings );
       maintenance.maintain();
     }

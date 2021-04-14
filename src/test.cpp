@@ -28,6 +28,8 @@ Test::Test()
 
 void Test::all()
 {
+  config();
+  return;
   size_t tests = 100;
   semantics();
   memory();
@@ -351,9 +353,9 @@ void Test::config()
 {
   Log::get().info( "Testing config" );
   Settings settings;
-  ConfigLoader config( settings );
-  check_int( "numGenerators", 2, 20, config.generator_configs.size() );
-  for ( auto &c : config.generator_configs )
+  auto config = ConfigLoader::load( settings );
+  check_int( "numGenerators", 4, 4, config.generators.size() );
+  for ( auto &c : config.generators )
   {
     check_int( "version", 1, 3, c.version );
     check_int( "replicas", 1, 3, c.replicas );

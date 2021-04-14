@@ -17,6 +17,7 @@ public:
 
   class Config
   {
+  public:
     std::string type;
     bool backoff;
   };

@@ -33,12 +33,17 @@ std::string get_file_as_string( const std::string& filename )
   return str;
 }
 
-std::vector<Generator::Config> loadGeneratorConfigs( jute::jValue &gens )
+std::vector<Generator::Config> loadGeneratorConfigs( jute::jValue &gens, const std::unordered_set<std::string>& names )
 {
   std::vector<Generator::Config> generators;
   for ( int i = 0; i < gens.size(); i++ )
   {
     auto g = gens[i];
+    auto name = g["name"].as_string();
+    if ( names.find( name ) == names.end() )
+    {
+      continue;
+    }
     Generator::Config c;
     c.version = get_jint( g, "version", 1 );
     c.replicas = get_jint( g, "replicas", 1 );
@@ -97,34 +102,40 @@ Miner::Config ConfigLoader::load( const Settings& settings )
     auto name = m["name"].as_string();
     if ( name == settings.miner )
     {
+      std::cout << name << std::endl;
       config.name = name;
       config.overwrite = get_jbool( m, "overwrite", false );
+
+      // load matcher configs
       bool backoff = get_jbool( m, "backoff", true );
       auto matchers = m["matchers"];
       for ( int j = 0; j < matchers.size(); j++ )
       {
         Matcher::Config mc;
         mc.backoff = backoff;
-        auto a = matchers[i];
+        auto a = matchers[j];
         mc.type = a.as_string();
       }
 
-      std::vector<std::string> gen_names;
-
+      // load generator configs
+      auto gen_names = m["generators"];
+      std::unordered_set<std::string> names;
+      for ( int j = 0; j < gen_names.size(); j++ )
+      {
+        std::cout << gen_names[j].as_string() << std::endl;
+        names.insert( gen_names[j].as_string() );
+      }
       auto gens = spec["generators"];
-
-      config.generators = loadGeneratorConfigs( gens );
+      config.generators = loadGeneratorConfigs( gens, names );
 
       found = true;
       break;
-
     }
   }
   if ( !found )
   {
     Log::get().error( "Miner config not found: " + settings.miner, true );
   }
-
   Log::get().debug(
       "Loaded miner config \"" + config.name + "\" with " + std::to_string( config.generators.size() )
           + " generators" );

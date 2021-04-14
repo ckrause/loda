@@ -15,6 +15,7 @@ public:
 
   class Config
   {
+  public:
     std::string name;
     bool overwrite;
     std::vector<Generator::Config> generators;

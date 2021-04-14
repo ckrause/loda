@@ -13,7 +13,7 @@ Finder::Finder( const Settings &settings )
       interpreter( settings ),
       num_find_attempts( 0 )
 {
-  ConfigLoader config( settings );
+  auto config = ConfigLoader::load( settings );
 
   // TODO: replace with miner config
   if ( config.overwrite )

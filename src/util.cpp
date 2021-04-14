@@ -318,6 +318,7 @@ std::vector<std::string> Settings::parseArgs( int argc, char *argv[] )
         break;
       case Option::LOG_LEVEL:
       case Option::LODA_CONFIG:
+      case Option::MINER:
       case Option::NONE:
         break;
       }

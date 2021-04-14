@@ -347,8 +347,8 @@ void Generator::ensureMeaningfulLoops( Program &p )
 MultiGenerator::MultiGenerator( const Settings &settings, const Stats& stats, int64_t seed )
 {
   std::mt19937 gen( seed );
-  ConfigLoader config( settings );
-  configs = config.generator_configs;
+  auto config = ConfigLoader::load( settings );
+  configs = config.generators;
   if ( configs.empty() )
   {
     Log::get().error( "No generators configurations found", true );

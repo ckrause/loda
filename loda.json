@@ -38,7 +38,7 @@
       "version": 1,
       "length": 30,
       "maxConstant": 5,
-      "maxCell": 5,
+      "maxIndex": 5,
       "loops": false,
       "calls": false,
       "indirectAccess": false,
@@ -55,7 +55,7 @@
       "version": 1,
       "length": 40,
       "maxConstant": 4,
-      "maxCell": 4,
+      "maxIndex": 4,
       "loops": true,
       "calls": false,
       "indirectAccess": false
@@ -65,7 +65,7 @@
       "version": 1,
       "length": 40,
       "maxConstant": 4,
-      "maxCell": 4,
+      "maxIndex": 4,
       "loops": false,
       "calls": true,
       "indirectAccess": false
@@ -75,7 +75,7 @@
       "version": 1,
       "length": 40,
       "maxConstant": 4,
-      "maxCell": 4,
+      "maxIndex": 4,
       "loops": true,
       "calls": true,
       "indirectAccess": false

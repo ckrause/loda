@@ -52,6 +52,7 @@ std::vector<Generator::Config> loadGeneratorConfigs( jute::jValue &gens, const s
       c.length = get_jint( g, "length", 20 );
       c.max_constant = get_jint( g, "maxConstant", 4 );
       c.max_index = get_jint( g, "maxIndex", 4 );
+      c.replicas = get_jint( g, "replicas", 1 );
       c.loops = get_jbool( g, "loops", true );
       c.calls = get_jbool( g, "calls", true );
       c.indirect_access = get_jbool( g, "indirectAccess", false );
@@ -89,6 +90,7 @@ std::vector<Generator::Config> loadGeneratorConfigs( jute::jValue &gens, const s
 
 Miner::Config ConfigLoader::load( const Settings& settings )
 {
+  Log::get().debug( "Loading miner config \"" + settings.miner + "\" from " + settings.loda_config );
   Miner::Config config;
 
   auto str = get_file_as_string( settings.loda_config );
@@ -102,7 +104,6 @@ Miner::Config ConfigLoader::load( const Settings& settings )
     auto name = m["name"].as_string();
     if ( name == settings.miner )
     {
-      std::cout << name << std::endl;
       config.name = name;
       config.overwrite = get_jbool( m, "overwrite", false );
 
@@ -113,8 +114,8 @@ Miner::Config ConfigLoader::load( const Settings& settings )
       {
         Matcher::Config mc;
         mc.backoff = backoff;
-        auto a = matchers[j];
-        mc.type = a.as_string();
+        mc.type = matchers[j].as_string();
+        config.matchers.push_back( mc );
       }
 
       // load generator configs
@@ -122,12 +123,12 @@ Miner::Config ConfigLoader::load( const Settings& settings )
       std::unordered_set<std::string> names;
       for ( int j = 0; j < gen_names.size(); j++ )
       {
-        std::cout << gen_names[j].as_string() << std::endl;
         names.insert( gen_names[j].as_string() );
       }
       auto gens = spec["generators"];
       config.generators = loadGeneratorConfigs( gens, names );
 
+      // done
       found = true;
       break;
     }
@@ -137,7 +138,7 @@ Miner::Config ConfigLoader::load( const Settings& settings )
     Log::get().error( "Miner config not found: " + settings.miner, true );
   }
   Log::get().debug(
-      "Loaded miner config \"" + config.name + "\" with " + std::to_string( config.generators.size() )
-          + " generators" );
+      "Finished loading miner config \"" + settings.miner + "\" from " + settings.loda_config + " with "
+          + std::to_string( config.generators.size() ) + " generators" );
   return config;
 }

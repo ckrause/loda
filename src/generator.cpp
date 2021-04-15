@@ -360,6 +360,9 @@ MultiGenerator::MultiGenerator( const Settings &settings, const Stats& stats, in
   }
   generator_index = gen() % configs.size();
   replica_index = gen() % configs.at( gen() % configs.size() ).replicas;
+  Log::get().info(
+      "Initialized " + std::to_string( generators.size() ) + " generators from '" + config.name
+          + "' config; overwrite: " + (config.overwrite ? "true" : "false") );
 }
 
 Generator* MultiGenerator::getGenerator()

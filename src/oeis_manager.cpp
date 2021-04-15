@@ -149,19 +149,9 @@ void OeisManager::load()
 
   // print summary
   Log::get().info(
-      "Loaded " + std::to_string( loaded_count ) + "/" + std::to_string( total_count ) + " sequences (ignored "
-          + std::to_string( seqs_to_remove.size() ) + ")" );
-  std::stringstream buf;
-  buf << "Matcher compaction ratios: ";
-  for ( size_t i = 0; i < finder.getMatchers().size(); i++ )
-  {
-    if ( i > 0 ) buf << ", ";
-    double ratio = 100.0 * (double) finder.getMatchers()[i]->getReducedSequences().size()
-        / (double) std::max<size_t>( loaded_count, 1 );
-    buf << finder.getMatchers()[i]->getName() << ": " << std::setprecision( 4 ) << ratio << "%";
-  }
-  Log::get().info( buf.str() );
-
+      "Loaded " + std::to_string( loaded_count ) + "/" + std::to_string( total_count ) + " sequences (ignoring "
+          + std::to_string( seqs_to_remove.size() ) + " during matching)" );
+  finder.logSummary( loaded_count );
 }
 
 size_t OeisManager::loadData()

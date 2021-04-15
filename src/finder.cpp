@@ -7,6 +7,7 @@
 #include "util.hpp"
 
 #include <fstream>
+#include <sstream>
 
 Finder::Finder( const Settings &settings )
     : settings( settings ),
@@ -165,6 +166,20 @@ void Finder::findAll( const Program &p, const Sequence &norm_seq, const std::vec
       j++;
     }
   }
+}
+
+void Finder::logSummary( size_t loaded_count )
+{
+  std::stringstream buf;
+  buf << "Matcher compaction ratios: ";
+  for ( size_t i = 0; i < matchers.size(); i++ )
+  {
+    if ( i > 0 ) buf << ", ";
+    double ratio = 100.0 * (double) matchers[i]->getReducedSequences().size()
+        / (double) std::max<size_t>( loaded_count, 1 );
+    buf << matchers[i]->getName() << ": " << std::setprecision( 4 ) << ratio << "%";
+  }
+  Log::get().info( buf.str() );
 }
 
 void Finder::publishMetrics()

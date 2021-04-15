@@ -5,6 +5,7 @@
 #include "reducer.hpp"
 #include "extender.hpp"
 
+#include <memory>
 #include <unordered_set>
 
 class Matcher

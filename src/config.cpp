@@ -97,12 +97,19 @@ Miner::Config ConfigLoader::load( const Settings& settings )
   auto spec = jute::parser::parse( str );
   auto miners = spec["miners"];
 
+  int index = -1;
+  if ( !settings.miner.empty() && std::find_if( settings.miner.begin(), settings.miner.end(), [](unsigned char c)
+  { return !std::isdigit(c);} ) == settings.miner.end() )
+  {
+    index = stoi( settings.miner ) % miners.size();
+  }
+
   bool found = false;
   for ( int i = 0; i < miners.size(); i++ )
   {
     auto m = miners[i];
     auto name = m["name"].as_string();
-    if ( name == settings.miner )
+    if ( name == settings.miner || i == index )
     {
       config.name = name;
       config.overwrite = get_jbool( m, "overwrite", false );

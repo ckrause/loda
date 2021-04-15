@@ -24,6 +24,7 @@ public:
 
   class Factory
   {
+  public:
     static Matcher::UPtr create( const Matcher::Config config );
   };
 

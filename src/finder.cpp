@@ -14,24 +14,19 @@ Finder::Finder( const Settings &settings )
       num_find_attempts( 0 )
 {
   auto config = ConfigLoader::load( settings );
+  if ( config.matchers.empty() )
+  {
+    Log::get().error( "No matchers defined", true );
+  }
 
-  // TODO: replace with miner config
-  if ( config.overwrite )
+  // create matchers
+  matchers.resize( config.matchers.size() );
+  for ( size_t i = 0; i < config.matchers.size(); i++ )
   {
-    matchers.resize( 3 );
-    matchers[0].reset( new DirectMatcher( false ) );
-    matchers[1].reset( new LinearMatcher( false ) );
-    matchers[2].reset( new LinearMatcher2( false ) );
+    matchers[i] = Matcher::Factory::create( config.matchers[i] );
   }
-  else
-  {
-    matchers.resize( 4 );
-    matchers[0].reset( new DirectMatcher( true ) );
-    matchers[1].reset( new LinearMatcher( true ) );
-    matchers[2].reset( new LinearMatcher2( true ) );
-    matchers[3].reset( new DeltaMatcher( true ) );
-    // matchers[4].reset( new PolynomialMatcher( true ) );
-  }
+
+  // reset matcher stats
   matcher_stats.resize( matchers.size() );
   for ( auto &s : matcher_stats )
   {

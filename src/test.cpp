@@ -411,6 +411,15 @@ void Test::config()
   check_int( "matchers[0].backoff", 0, config.matchers[0].backoff );
   check_str( "matchers[1].type", "delta", config.matchers[1].type );
   check_int( "matchers[1].backoff", 0, config.matchers[1].backoff );
+
+  settings.miner = "0";
+  config = ConfigLoader::load( settings );
+  check_int( "generators.size", 3, config.generators.size() );
+
+  settings.miner = "1";
+  config = ConfigLoader::load( settings );
+  check_int( "generators.size", 2, config.generators.size() );
+
 }
 
 void Test::stats()

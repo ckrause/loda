@@ -22,7 +22,7 @@
 #include <stdexcept>
 
 Test::Test()
-    : manager( Settings() )
+    : manager( settings )
 {
 }
 
@@ -275,7 +275,6 @@ void Test::steps()
   auto file = OeisSequence( 12 ).getProgramPath();
   Log::get().info( "Testing steps for " + file );
   Parser parser;
-  Settings settings;
   Interpreter interpreter( settings );
   auto p = parser.parse( file );
   Memory mem;
@@ -589,7 +588,6 @@ void Test::optimizer()
 
 void Test::minimizer( size_t tests )
 {
-  Settings settings;
   Interpreter interpreter( settings );
   Minimizer minimizer( settings );
   std::random_device rand;
@@ -640,7 +638,6 @@ void Test::deltaMatcher()
 
 void Test::polynomialMatcher( size_t tests, size_t degree )
 {
-  Settings settings;
   Parser parser;
   Interpreter interpreter( settings );
   Optimizer optimizer( settings );
@@ -718,7 +715,7 @@ void Test::testBinary( const std::string &func, const std::string &file,
 {
   Log::get().info( "Testing " + file );
   Parser parser;
-  Settings settings;
+  Settings settings; // need special settings here
 // settings needed for ackermann
   settings.max_memory = 100000;
   settings.max_cycles = 10000000;
@@ -745,7 +742,7 @@ void Test::testSeq( size_t id, const Sequence &expected )
   auto file = OeisSequence( id ).getProgramPath();
   Log::get().info( "Testing " + file );
   Parser parser;
-  Settings settings;
+  Settings settings; // special settings
   settings.num_terms = expected.size();
   Interpreter interpreter( settings );
   auto p = parser.parse( file );
@@ -774,7 +771,6 @@ void Test::testMatcherPair( Matcher &matcher, size_t id1, size_t id2 )
       "Testing " + matcher.getName() + " matcher for " + OeisSequence( id1 ).id_str() + " -> "
           + OeisSequence( id2 ).id_str() );
   Parser parser;
-  Settings settings;
   Interpreter interpreter( settings );
   auto p1 = parser.parse( OeisSequence( id1 ).getProgramPath() );
   auto p2 = parser.parse( OeisSequence( id2 ).getProgramPath() );

@@ -58,7 +58,6 @@ void OeisManager::load()
   // TODO: if stats exist at this point already, it would help
   // to load them in advance. But be careful with deadlocks!
 
-  size_t loaded_count = 0;
   {
     // obtain lock
     FolderLock lock( OeisSequence::getHome() );

@@ -35,8 +35,6 @@ public:
 
   virtual void insert( const Sequence &norm_seq, size_t id ) = 0;
 
-  virtual void remove( const Sequence &norm_seq, size_t id ) = 0;
-
   virtual void match( const Program &p, const Sequence &norm_seq, seq_programs_t &result ) const = 0;
 
   virtual const std::string& getName() const = 0;
@@ -65,8 +63,6 @@ public:
   }
 
   virtual void insert( const Sequence &norm_seq, size_t id ) override;
-
-  virtual void remove( const Sequence &norm_seq, size_t id ) override;
 
   virtual void match( const Program &p, const Sequence &norm_seq, seq_programs_t &result ) const override;
 

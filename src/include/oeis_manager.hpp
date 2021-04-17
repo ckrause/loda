@@ -46,6 +46,8 @@ private:
 
   void loadDenylist();
 
+  bool shouldMatch( const OeisSequence& seq ) const;
+
   void update();
 
   void generateStats( int64_t age_in_days );
@@ -54,7 +56,7 @@ private:
 
   void dumpProgram( size_t id, Program p, const std::string &file ) const;
 
-  std::pair<bool, Program> checkAndMinimize( const Program &p, const OeisSequence &seq, bool minimize );
+  std::pair<bool, Program> checkAndMinimize( const Program &p, const OeisSequence &seq );
 
   std::string isOptimizedBetter( Program existing, Program optimized, const OeisSequence &seq );
 

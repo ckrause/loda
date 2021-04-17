@@ -47,14 +47,6 @@ void AbstractMatcher<T>::insert( const Sequence &norm_seq, size_t id )
 }
 
 template<class T>
-void AbstractMatcher<T>::remove( const Sequence &norm_seq, size_t id )
-{
-  auto reduced = reduce( norm_seq );
-  ids.remove( reduced.first, id );
-  data.erase( id );
-}
-
-template<class T>
 void AbstractMatcher<T>::match( const Program &p, const Sequence &norm_seq, seq_programs_t &result ) const
 {
   if ( !shouldMatchSequence( norm_seq ) )

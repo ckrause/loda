@@ -34,13 +34,11 @@ public:
     return total_count;
   }
 
-  void removeSequenceFromFinder( size_t id );
-
   std::pair<bool, bool> updateProgram( size_t id, const Program &p );
 
 private:
 
-  size_t loadData();
+  void loadData();
 
   void loadNames();
 
@@ -70,6 +68,9 @@ private:
   Optimizer optimizer;
   std::vector<OeisSequence> sequences;
   std::unordered_set<size_t> denylist;
+
+  size_t loaded_count;
+  size_t ignored_count;
   size_t total_count;
 
   Stats stats;

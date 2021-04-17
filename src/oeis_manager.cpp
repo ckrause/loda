@@ -37,6 +37,8 @@ OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
       finder( settings ),
       minimizer( settings ),
       optimizer( settings ),
+      loaded_count( 0 ),
+      ignored_count( 0 ),
       total_count( 0 ),
       stats_loaded( false )
 {
@@ -53,6 +55,9 @@ void OeisManager::load()
   // first load the deny list (needs no lock)
   loadDenylist();
 
+  // TODO: if stats exist at this point already, it would help
+  // to load them in advance. But be careful with deadlocks!
+
   size_t loaded_count = 0;
   {
     // obtain lock
@@ -63,74 +68,10 @@ void OeisManager::load()
 
     // load sequence data, names and deny list
     Log::get().info( "Loading sequences from the OEIS index" );
-    loaded_count = loadData();
+    loadData();
     loadNames();
 
     // lock released at the end of this block
-  }
-
-  // try to load stats to speed up the removal of existing programs
-  // DISABLED BECAUSE IT CAN LEAD TO DEADLOCKS
-  //if ( !overwrite )
-  //{
-  //  std::ifstream stats_file( stats.getMainStatsFile( getStatsHome() ) );
-  //  if ( stats_file.good() )
-  //  {
-  //    getStats();
-  //  }
-  //}
-
-  // collect known / linear sequences if they should be ignored
-  std::vector<number_t> seqs_to_remove;
-  bool prog_exists;
-  for ( auto &seq : sequences )
-  {
-    if ( seq.id == 0 )
-    {
-      continue;
-    }
-
-    // sequence on the deny list?
-    if ( denylist.find( seq.id ) != denylist.end() )
-    {
-      seqs_to_remove.push_back( seq.id );
-      continue;
-    }
-
-    // if not overwriting existing programs...
-    if ( !overwrite )
-    {
-      // linear sequence?
-      auto terms = seq.getTerms( settings.num_terms );
-      if ( !settings.search_linear && terms.is_linear( settings.linear_prefix ) )
-      {
-        seqs_to_remove.push_back( seq.id );
-        continue;
-      }
-      // already exists?
-      if ( stats_loaded )
-      {
-        prog_exists = (seq.id < stats.found_programs.size()) && stats.found_programs[seq.id];
-      }
-      else
-      {
-        std::ifstream in( seq.getProgramPath() );
-        prog_exists = in.good();
-      }
-      if ( prog_exists )
-      {
-        seqs_to_remove.push_back( seq.id );
-      }
-    }
-  }
-
-  // remove sequences
-  if ( !seqs_to_remove.empty() )
-  {
-    for ( auto id : seqs_to_remove )
-    {
-      removeSequenceFromFinder( id );
-    }
   }
 
   // shrink sequences vector again
@@ -150,11 +91,11 @@ void OeisManager::load()
   // print summary
   Log::get().info(
       "Loaded " + std::to_string( loaded_count ) + "/" + std::to_string( total_count ) + " sequences (ignoring "
-          + std::to_string( seqs_to_remove.size() ) + " during matching)" );
+          + std::to_string( ignored_count ) + " during matching)" );
   finder.logSummary( loaded_count );
 }
 
-size_t OeisManager::loadData()
+void OeisManager::loadData()
 {
   std::string path = OeisSequence::getHome() + "stripped";
   std::ifstream stripped( path );
@@ -167,8 +108,11 @@ size_t OeisManager::loadData()
   size_t id;
   int64_t num, sign;
   Sequence seq_full, seq_big;
-  size_t loaded_count = 0;
-  std::random_device rand;
+
+  loaded_count = 0;
+  ignored_count = 0;
+  total_count = 0;
+
   while ( std::getline( stripped, line ) )
   {
     if ( line.empty() || line[0] == '#' )
@@ -179,7 +123,7 @@ size_t OeisManager::loadData()
     {
       throwParseError( line );
     }
-    ++total_count;
+    total_count++;
     pos = 1;
     id = 0;
     for ( pos = 1; pos < line.length() && line[pos] >= '0' && line[pos] <= '9'; ++pos )
@@ -239,13 +183,19 @@ size_t OeisManager::loadData()
     }
     sequences[id] = OeisSequence( id, "", seq_full );
 
-    // add sequences to matchers
-    auto seq_norm = sequences[id].getTerms( settings.num_terms );
-    finder.insert( seq_norm, id );
+    // add sequence to matchers
+    if ( shouldMatch( sequences[id] ) )
+    {
+      auto seq_norm = sequences[id].getTerms( settings.num_terms );
+      finder.insert( seq_norm, id );
+    }
+    else
+    {
+      ignored_count++;
+    }
 
-    ++loaded_count;
+    loaded_count++;
   }
-  return loaded_count;
 }
 
 void OeisManager::loadNames()
@@ -541,20 +491,6 @@ const Stats& OeisManager::getStats()
     // lock released at the end of this block
   }
   return stats;
-}
-
-void OeisManager::removeSequenceFromFinder( size_t id )
-{
-  if ( id >= sequences.size() )
-  {
-    return;
-  }
-  if ( sequences[id].id == id )
-  {
-    finder.remove( sequences[id].getTerms( settings.num_terms ), id );
-    // we still want to keep it in the index to retain metadata about called programs
-    // sequences[id] = OeisSequence();
-  }
 }
 
 void OeisManager::addCalComments( Program& p ) const

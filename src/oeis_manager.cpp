@@ -289,15 +289,16 @@ bool OeisManager::shouldMatch( const OeisSequence& seq ) const
     return false;
   }
 
+  // linear sequence?
+  auto terms = seq.getTerms( settings.num_terms );
+  if ( !settings.search_linear && terms.is_linear( settings.linear_prefix ) )
+  {
+    return false;
+  }
+
   // if not overwriting existing programs...
   if ( !overwrite )
   {
-    // linear sequence?
-    auto terms = seq.getTerms( settings.num_terms );
-    if ( !settings.search_linear && terms.is_linear( settings.linear_prefix ) )
-    {
-      return false;
-    }
     // already exists?
     bool prog_exists;
     if ( stats_loaded )

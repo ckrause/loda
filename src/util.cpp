@@ -541,7 +541,7 @@ AdaptiveScheduler::AdaptiveScheduler( int64_t target_seconds )
 bool AdaptiveScheduler::isTargetReached()
 {
   total_checks++;
-  if ( total_checks == next_check )
+  if ( total_checks >= next_check )
   {
     auto cur_time = std::chrono::steady_clock::now();
     int64_t seconds = std::chrono::duration_cast<std::chrono::seconds>( cur_time - start_time ).count();

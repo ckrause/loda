@@ -531,3 +531,40 @@ void FolderLock::release()
     fd = 0;
   }
 }
+
+AdaptiveScheduler::AdaptiveScheduler( size_t target_seconds )
+    : target_seconds( target_seconds )
+{
+  reset();
+}
+
+bool AdaptiveScheduler::shouldSwitch()
+{
+  total_checks++;
+  if ( total_checks == next_check )
+  {
+    auto cur_time = std::chrono::steady_clock::now();
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>( cur_time - start_time ).count();
+    if ( seconds >= target_seconds )
+    {
+      return true;
+    }
+    if ( 2 * seconds < target_seconds )
+    {
+      next_check *= 2;
+    }
+    else
+    {
+
+    }
+    return false;
+  }
+  return false;
+}
+
+void AdaptiveScheduler::reset()
+{
+  total_checks = 0;
+  next_check = 1;
+  start_time = std::chrono::steady_clock::now();
+}

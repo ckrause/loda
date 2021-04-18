@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <csignal>
 #include <map>
 #include <string>
@@ -111,4 +112,22 @@ public:
 private:
   std::string lockfile;
   int fd;
+};
+
+class AdaptiveScheduler
+{
+public:
+
+  AdaptiveScheduler( size_t target_seconds );
+
+  bool shouldSwitch();
+
+  void reset();
+
+private:
+  std::chrono::time_point<std::chrono::steady_clock> start_time;
+  const size_t target_seconds;
+  size_t total_checks;
+  size_t next_check;
+
 };

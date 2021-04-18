@@ -118,15 +118,15 @@ class AdaptiveScheduler
 {
 public:
 
-  AdaptiveScheduler( size_t target_seconds );
+  AdaptiveScheduler( int64_t target_seconds );
 
-  bool shouldSwitch();
+  bool isTargetReached();
 
   void reset();
 
 private:
   std::chrono::time_point<std::chrono::steady_clock> start_time;
-  const size_t target_seconds;
+  const int64_t target_seconds;
   size_t total_checks;
   size_t next_check;
 

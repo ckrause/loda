@@ -532,19 +532,19 @@ void FolderLock::release()
   }
 }
 
-AdaptiveScheduler::AdaptiveScheduler( size_t target_seconds )
+AdaptiveScheduler::AdaptiveScheduler( int64_t target_seconds )
     : target_seconds( target_seconds )
 {
   reset();
 }
 
-bool AdaptiveScheduler::shouldSwitch()
+bool AdaptiveScheduler::isTargetReached()
 {
   total_checks++;
   if ( total_checks == next_check )
   {
     auto cur_time = std::chrono::steady_clock::now();
-    auto seconds = std::chrono::duration_cast<std::chrono::seconds>( cur_time - start_time ).count();
+    int64_t seconds = std::chrono::duration_cast<std::chrono::seconds>( cur_time - start_time ).count();
     if ( seconds >= target_seconds )
     {
       return true;
@@ -555,9 +555,10 @@ bool AdaptiveScheduler::shouldSwitch()
     }
     else
     {
-
+      seconds = std::max<int64_t>( seconds, 1 );
+      double speed = static_cast<double>( total_checks ) / static_cast<double>( seconds );
+      next_check += std::max<int64_t>( static_cast<int64_t>( (target_seconds - seconds) * speed ), 1 );
     }
-    return false;
   }
   return false;
 }

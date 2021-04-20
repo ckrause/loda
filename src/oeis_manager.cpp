@@ -46,6 +46,22 @@ OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
 
 void OeisManager::load()
 {
+  // load oeis data
+  loadOeis();
+
+  // generate stats is needed
+  getStats();
+
+  // initialize matchers
+  initMatchers();
+
+  // print summary
+  Log::get().info( "Ignoring " + std::to_string( ignored_count ) + " sequences during matching" );
+  finder.logSummary( loaded_count );
+}
+
+void OeisManager::loadOeis()
+{
   // check if already loaded
   if ( total_count > 0 )
   {
@@ -88,14 +104,8 @@ void OeisManager::load()
     sequences.resize( i + 1 );
   }
 
-  // initialize matchers
-  initMatchers();
-
   // print summary
-  Log::get().info(
-      "Loaded " + std::to_string( loaded_count ) + "/" + std::to_string( total_count ) + " sequences (ignoring "
-          + std::to_string( ignored_count ) + " during matching)" );
-  finder.logSummary( loaded_count );
+  Log::get().info( "Loaded " + std::to_string( loaded_count ) + "/" + std::to_string( total_count ) + " sequences" );
 }
 
 void OeisManager::loadData()
@@ -391,7 +401,7 @@ void OeisManager::update()
 
 void OeisManager::generateStats( int64_t age_in_days )
 {
-  load();
+  loadOeis();
   std::string msg;
   if ( age_in_days < 0 )
   {
@@ -438,11 +448,12 @@ void OeisManager::generateStats( int64_t age_in_days )
 
       // update stats
       stats.updateProgramStats( s.id, program );
+      num_processed++;
 
-      if ( ++num_processed % 1000 == 0 )
-      {
-        Log::get().info( "Processed " + std::to_string( num_processed ) + " programs" );
-      }
+      //if ( num_processed % 1000 == 0 )
+      //{
+      //  Log::get().info( "Processed " + std::to_string( num_processed ) + " programs" );
+      //}
     }
     stats.updateSequenceStats( s.id, has_program, has_b_file );
   }

@@ -35,7 +35,7 @@ OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
       overwrite( force_overwrite || ConfigLoader::load( settings ).overwrite ),
       interpreter( settings ),
       finder( settings ),
-      matchers_initialized( false ),
+      finder_initialized( false ),
       minimizer( settings ),
       optimizer( settings ),
       loaded_count( 0 ),
@@ -262,7 +262,7 @@ void OeisManager::loadList( const std::string& name, std::unordered_set<size_t>&
 
 Finder& OeisManager::getFinder()
 {
-  if ( !matchers_initialized )
+  if ( !finder_initialized )
   {
     // generate stats is needed
     getStats();
@@ -284,7 +284,7 @@ Finder& OeisManager::getFinder()
         ignored_count++;
       }
     }
-    matchers_initialized = true;
+    finder_initialized = true;
 
     // print summary
     Log::get().info(

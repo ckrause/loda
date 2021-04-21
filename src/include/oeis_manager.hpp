@@ -64,7 +64,7 @@ private:
   Interpreter interpreter;
 
   Finder finder;
-  bool matchers_initialized;
+  bool finder_initialized;
 
   Minimizer minimizer;
   Optimizer optimizer;

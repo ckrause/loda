@@ -260,6 +260,41 @@ void OeisManager::loadList( const std::string& name, std::unordered_set<size_t>&
   Log::get().debug( "Finished loading of " + name + " list with " + std::to_string( list.size() ) + " entries" );
 }
 
+Finder& OeisManager::getFinder()
+{
+  if ( !matchers_initialized )
+  {
+    // generate stats is needed
+    getStats();
+
+    ignored_count = 0;
+    for ( auto& seq : sequences )
+    {
+      if ( seq.id == 0 )
+      {
+        continue;
+      }
+      if ( shouldMatch( seq ) )
+      {
+        auto seq_norm = seq.getTerms( settings.num_terms );
+        finder.insert( seq_norm, seq.id );
+      }
+      else
+      {
+        ignored_count++;
+      }
+    }
+    matchers_initialized = true;
+
+    // print summary
+    Log::get().info(
+        "Initialized " + std::to_string( finder.getMatchers().size() ) + " matchers (ignoring "
+            + std::to_string( ignored_count ) + " sequences)" );
+    finder.logSummary( loaded_count );
+  }
+  return finder;
+}
+
 bool OeisManager::shouldMatch( const OeisSequence& seq ) const
 {
   if ( seq.id == 0 )
@@ -480,41 +515,6 @@ const Stats& OeisManager::getStats()
     // lock released at the end of this block
   }
   return stats;
-}
-
-Finder& OeisManager::getFinder()
-{
-  if ( !matchers_initialized )
-  {
-    // generate stats is needed
-    getStats();
-
-    ignored_count = 0;
-    for ( auto& seq : sequences )
-    {
-      if ( seq.id == 0 )
-      {
-        continue;
-      }
-      if ( shouldMatch( seq ) )
-      {
-        auto seq_norm = seq.getTerms( settings.num_terms );
-        finder.insert( seq_norm, seq.id );
-      }
-      else
-      {
-        ignored_count++;
-      }
-    }
-    matchers_initialized = true;
-
-    // print summary
-    Log::get().info(
-        "Initialized " + std::to_string( finder.getMatchers().size() ) + " matchers (ignoring "
-            + std::to_string( ignored_count ) + " sequences)" );
-    finder.logSummary( loaded_count );
-  }
-  return finder;
 }
 
 void OeisManager::addCalComments( Program& p ) const

@@ -32,7 +32,7 @@ std::string getStatsHome()
 
 OeisManager::OeisManager( const Settings &settings, bool force_overwrite )
     : settings( settings ),
-      overwrite( force_overwrite || ConfigLoader::load( settings ).overwrite ),
+      overwrite_mode( force_overwrite ? OverwriteMode::ALL : ConfigLoader::load( settings ).overwrite_mode ),
       interpreter( settings ),
       finder( settings ),
       finder_initialized( false ),
@@ -320,7 +320,7 @@ bool OeisManager::shouldMatch( const OeisSequence& seq ) const
   }
 
   // if not overwriting existing programs...
-  if ( !overwrite )
+  if ( overwrite_mode == OverwriteMode::NONE )
   {
     // already exists?
     bool prog_exists;
@@ -743,7 +743,7 @@ std::pair<bool, bool> OeisManager::updateProgram( size_t id, const Program &p )
     std::ifstream in( file_name );
     if ( in.good() )
     {
-      if ( overwrite )
+      if ( overwrite_mode == OverwriteMode::ALL )
       {
         is_new = false;
         Parser parser;

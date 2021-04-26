@@ -363,7 +363,7 @@ void Test::config()
   settings.loda_config = "tests/config/test_loda.json";
   settings.miner = "default";
   auto config = ConfigLoader::load( settings );
-  check_int( "overwrite", 0, config.overwrite );
+  check_int( "overwrite", 1, config.overwrite_mode == OverwriteMode::NONE );
 
   check_int( "generators.size", 3, config.generators.size() );
   check_int( "generators[0].version", 1, config.generators[0].version );
@@ -399,7 +399,7 @@ void Test::config()
 
   settings.miner = "update";
   config = ConfigLoader::load( settings );
-  check_int( "overwrite", 1, config.overwrite );
+  check_int( "overwrite", 1, config.overwrite_mode == OverwriteMode::ALL );
 
   check_int( "generators.size", 2, config.generators.size() );
   check_int( "generators[0].version", 2, config.generators[0].version );

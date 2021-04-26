@@ -10,6 +10,12 @@
 #include "stats.hpp"
 #include "util.hpp"
 
+enum class OverwriteMode
+{
+  NONE,
+  ALL
+};
+
 class OeisManager
 {
 public:
@@ -60,7 +66,7 @@ private:
   friend class OeisMaintenance;
 
   const Settings &settings;
-  const bool overwrite;
+  const OverwriteMode overwrite_mode;
   Interpreter interpreter;
 
   Finder finder;

@@ -267,14 +267,13 @@ Finder& OeisManager::getFinder()
     getStats();
 
     ignore_list.clear();
-    std::set<size_t> visited;
     for ( auto& seq : sequences )
     {
       if ( seq.id == 0 )
       {
         continue;
       }
-      if ( shouldMatch( seq, visited ) )
+      if ( shouldMatch( seq ) )
       {
         auto seq_norm = seq.getTerms( settings.num_terms );
         finder.insert( seq_norm, seq.id );
@@ -295,7 +294,7 @@ Finder& OeisManager::getFinder()
   return finder;
 }
 
-bool OeisManager::shouldMatch( const OeisSequence& seq, std::set<size_t>& visited ) const
+bool OeisManager::shouldMatch( const OeisSequence& seq ) const
 {
   if ( seq.id == 0 )
   {
@@ -332,7 +331,7 @@ bool OeisManager::shouldMatch( const OeisSequence& seq, std::set<size_t>& visite
     return true;
 
   case OverwriteMode::AUTO:
-    return !prog_exists || stats.getTransitiveLength( seq.id, visited ) > 10; // magic number
+    return !prog_exists || stats.getTransitiveLength( seq.id, false ) > 10; // magic number
   }
   return true;
 }

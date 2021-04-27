@@ -176,7 +176,6 @@ void Stats::load( const std::string &path )
       std::stringstream s( line );
       std::getline( s, k, ',' );
       std::getline( s, v );
-      std::cout << "ins " << k << " " << v << std::endl;
       cal_graph.insert( std::pair<number_t, number_t>( OeisSequence( k ).id, OeisSequence( v ).id ) );
     }
     cal.close();
@@ -348,19 +347,24 @@ void Stats::updateSequenceStats( size_t id, bool program_found, bool has_b_file 
   cached_b_files[id] = has_b_file;
 }
 
-int64_t Stats::getTransitiveLength( size_t id, std::set<size_t>& visited ) const
+int64_t Stats::getTransitiveLength( size_t id, bool throw_on_recursion ) const
 {
-  if ( visited.find( id ) != visited.end() )
+  if ( visited_programs.find( id ) != visited_programs.end() )
   {
-    throw std::runtime_error( "Recursion detected in " + OeisSequence( id ).getProgramPath() );
+    visited_programs.clear();
+    if ( throw_on_recursion )
+    {
+      throw std::runtime_error( "Recursion detected in " + OeisSequence( id ).getProgramPath() );
+    }
+    return 0; // ignoring recursion
   }
-  visited.insert( id );
+  visited_programs.insert( id );
   int64_t length = program_lengths.at( id );
   auto range = cal_graph.equal_range( id );
   for ( auto& it = range.first; it != range.second; it++ )
   {
-    length += getTransitiveLength( it->second, visited );
+    length += getTransitiveLength( it->second, throw_on_recursion );
   }
-  visited.erase( id );
+  visited_programs.erase( id );
   return length;
 }

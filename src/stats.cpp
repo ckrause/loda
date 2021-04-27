@@ -171,6 +171,7 @@ void Stats::load( const std::string &path )
     {
       throw std::runtime_error( "Unexpected first line in " + full );
     }
+    cal_graph.clear();
     while ( std::getline( cal, line ) )
     {
       std::stringstream s( line );
@@ -352,11 +353,16 @@ int64_t Stats::getTransitiveLength( size_t id, bool throw_on_recursion ) const
   if ( visited_programs.find( id ) != visited_programs.end() )
   {
     visited_programs.clear();
+    std::string msg = "Recursion detected in stats for " + OeisSequence( id ).getProgramPath();
     if ( throw_on_recursion )
     {
-      throw std::runtime_error( "Recursion detected in " + OeisSequence( id ).getProgramPath() );
+      throw std::runtime_error( msg );
     }
-    return 0; // ignoring recursion
+    else
+    {
+      Log::get().warn( msg );
+      return 0; // ignoring recursion
+    }
   }
   visited_programs.insert( id );
   int64_t length = program_lengths.at( id );

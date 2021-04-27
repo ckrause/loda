@@ -378,6 +378,9 @@ MultiGenerator::MultiGenerator( const Settings &settings, const Stats& stats, in
   case OverwriteMode::ALL:
     overwrite = "all";
     break;
+  case OverwriteMode::AUTO:
+    overwrite = "auto";
+    break;
   }
   Log::get().info(
       "Initialized " + std::to_string( generators.size() ) + " generators from '" + config.name

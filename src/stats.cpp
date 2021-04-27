@@ -163,6 +163,25 @@ void Stats::load( const std::string &path )
     programs.close();
   }
 
+  {
+    full = path + "/cal_graph.csv";
+    Log::get().debug( "Loading " + full );
+    std::ifstream cal( full );
+    if ( !std::getline( cal, line ) || line != "caller,callee" )
+    {
+      throw std::runtime_error( "Unexpected first line in " + full );
+    }
+    while ( std::getline( cal, line ) )
+    {
+      std::stringstream s( line );
+      std::getline( s, k, ',' );
+      std::getline( s, v );
+      std::cout << "ins " << k << " " << v << std::endl;
+      cal_graph.insert( std::pair<number_t, number_t>( OeisSequence( k ).id, OeisSequence( v ).id ) );
+    }
+    cal.close();
+  }
+
   // TODO: remaining stats
 
   Log::get().debug( "Finished loading program stats" );
@@ -337,9 +356,10 @@ int64_t Stats::getTransitiveLength( size_t id, std::set<size_t>& visited ) const
   }
   visited.insert( id );
   int64_t length = program_lengths.at( id );
-  for ( auto& it : cal_graph )
+  auto range = cal_graph.equal_range( id );
+  for ( auto& it = range.first; it != range.second; it++ )
   {
-    length += getTransitiveLength( it.second, visited );
+    length += getTransitiveLength( it->second, visited );
   }
   visited.erase( id );
   return length;

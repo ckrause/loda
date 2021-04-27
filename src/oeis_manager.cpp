@@ -267,13 +267,14 @@ Finder& OeisManager::getFinder()
     getStats();
 
     ignore_list.clear();
+    std::set<size_t> visited;
     for ( auto& seq : sequences )
     {
       if ( seq.id == 0 )
       {
         continue;
       }
-      if ( shouldMatch( seq ) )
+      if ( shouldMatch( seq, visited ) )
       {
         auto seq_norm = seq.getTerms( settings.num_terms );
         finder.insert( seq_norm, seq.id );
@@ -294,7 +295,7 @@ Finder& OeisManager::getFinder()
   return finder;
 }
 
-bool OeisManager::shouldMatch( const OeisSequence& seq ) const
+bool OeisManager::shouldMatch( const OeisSequence& seq, std::set<size_t>& visited ) const
 {
   if ( seq.id == 0 )
   {
@@ -318,24 +319,20 @@ bool OeisManager::shouldMatch( const OeisSequence& seq ) const
     return false;
   }
 
-  // if not overwriting existing programs...
-  if ( overwrite_mode == OverwriteMode::NONE )
+  // check if program exists
+  const bool prog_exists = (seq.id < stats.found_programs.size()) && stats.found_programs[seq.id];
+
+  // decide based on overwrite mode
+  switch ( overwrite_mode )
   {
-    // already exists?
-    bool prog_exists;
-    if ( stats_loaded )
-    {
-      prog_exists = (seq.id < stats.found_programs.size()) && stats.found_programs[seq.id];
-    }
-    else
-    {
-      std::ifstream in( seq.getProgramPath() );
-      prog_exists = in.good();
-    }
-    if ( prog_exists )
-    {
-      return false;
-    }
+  case OverwriteMode::NONE:
+    return !prog_exists;
+
+  case OverwriteMode::ALL:
+    return true;
+
+  case OverwriteMode::AUTO:
+    return !prog_exists || stats.getTransitiveLength( seq.id, visited ) > 10; // magic number
   }
   return true;
 }

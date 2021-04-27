@@ -13,7 +13,8 @@
 enum class OverwriteMode
 {
   NONE,
-  ALL
+  ALL,
+  AUTO
 };
 
 class OeisManager
@@ -47,7 +48,7 @@ private:
 
   static void loadList( const std::string& name, std::unordered_set<size_t>& list );
 
-  bool shouldMatch( const OeisSequence& seq ) const;
+  bool shouldMatch( const OeisSequence& seq, std::set<size_t>& visited ) const;
 
   void update();
 

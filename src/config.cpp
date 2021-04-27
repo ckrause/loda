@@ -121,6 +121,10 @@ Miner::Config ConfigLoader::load( const Settings& settings )
       {
         config.overwrite_mode = OverwriteMode::ALL;
       }
+      else if ( overwrite_mode == "auto" )
+      {
+        config.overwrite_mode = OverwriteMode::AUTO;
+      }
       else
       {
         throw std::runtime_error( "Unknown overwrite mode: " + overwrite_mode );

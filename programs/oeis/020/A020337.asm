@@ -18,10 +18,9 @@ lpb $12
     add $0,$8
     sub $0,1
     lpb $0
-      cal $2,13954 ; a(n) = sigma_6(n), the sum of the 6th powers of the divisors of n.
       mov $5,$0
       mod $0,8
-      add $5,$2
+      add $5,1
     lpe
     mov $1,$5
     mov $9,$8

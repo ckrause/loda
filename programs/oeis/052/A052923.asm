@@ -7,13 +7,12 @@ lpb $3
   sub $3,1
   add $0,$3
   sub $0,1
-  mov $6,$0
-  max $6,0
-  cal $6,6131 ; a(n) = a(n-1) + 4*a(n-2), a(0) = a(1) = 1.
+  mov $4,$0
+  max $4,0
+  cal $4,6131 ; a(n) = a(n-1) + 4*a(n-2), a(0) = a(1) = 1.
   mov $2,$3
-  mul $2,$6
+  mul $2,$4
   add $1,$2
-  mov $4,$6
 lpe
 min $5,1
 mul $5,$4

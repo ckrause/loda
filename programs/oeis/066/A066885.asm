@@ -3,9 +3,6 @@
 
 cal $0,65091 ; Odd primes.
 pow $0,2
-mul $0,2
+div $0,2
 mov $1,$0
-sub $1,18
-div $1,16
-mul $1,4
-add $1,5
+add $1,1

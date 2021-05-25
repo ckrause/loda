@@ -3,19 +3,18 @@
 
 mov $3,$0
 add $3,1
-mov $5,$0
+mov $6,$0
 lpb $3
-  mov $0,$5
+  mov $0,$6
   sub $3,1
   sub $0,$3
-  mov $2,17
-  lpb $0
-    cal $0,52126 ; a(1) = 1; for n>1, a(n)=n/(largest prime dividing n).
-    pow $0,2
-    sub $0,1
-    cmp $2,0
-  lpe
+  mov $2,2
+  cal $0,341642 ; Number of strictly superior prime divisors of n.
+  sub $5,$0
+  gcd $2,$5
+  pow $2,2
   mov $4,$2
-  div $4,17
+  div $4,3
   add $1,$4
+  div $5,18
 lpe

@@ -9,12 +9,14 @@ lpb $3
   add $0,$3
   sub $0,1
   max $0,0
-  cal $0,120503 ; Generalized meta-Fibonacci sequence a(n) with parameters s=0 and k=3.
-  mov $2,$3
-  mul $2,$0
-  add $1,$2
-  mov $4,$0
+  cal $0,96346 ; Complement of A004128.
+  sub $0,$3
+  add $3,$0
+  mov $5,$4
+  mul $5,$3
+  add $1,$5
 lpe
-min $5,1
-mul $5,$4
-sub $1,$5
+min $2,1
+mul $2,$3
+sub $1,$2
+div $1,3

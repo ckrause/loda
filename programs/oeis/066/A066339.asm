@@ -3,11 +3,10 @@
 
 mov $2,$0
 mov $3,$0
-lpb $3
-  mov $0,$2
-  sub $3,1
-  sub $0,$3
-  cal $0,151763 ; If n is a prime == 1 mod 4 then a(n) = 1, if n is a prime == 3 mod 4 then a(n) = -1, otherwise a(n) = 0.
-  max $0,0
+lpb $2
+  mov $0,$3
+  sub $2,1
+  sub $0,$2
+  cal $0,79260 ; Characteristic function of primes of form 4n+1 (1 if n is prime of form 4n+1, 0 otherwise).
   add $1,$0
 lpe

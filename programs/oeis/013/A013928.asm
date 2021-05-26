@@ -9,9 +9,8 @@ lpb $2
   sub $2,1
   sub $0,$2
   sub $0,1
-  max $0,0
-  cal $0,8683 ; Möbius (or Moebius) function mu(n). mu(1) = 1; mu(n) = (-1)^k if n is the product of k different primes; otherwise mu(n) = 0.
-  pow $0,10
+  max $0,2
+  cal $0,8966 ; 1 if n is squarefree, else 0.
   add $1,$0
 lpe
 sub $1,1

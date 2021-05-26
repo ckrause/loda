@@ -1,55 +1,29 @@
 ; A006636: From generalized Catalan numbers.
 ; 8,36,102,231,456,819,1372,2178,3312,4862,6930,9633,13104,17493,22968,29716,37944,47880,59774,73899,90552,110055,132756,159030,189280,223938,263466,308357,359136,416361,480624,552552,632808,722092,821142,930735
 
-mov $15,$0
-mov $17,$0
-add $17,1
-lpb $17
-  clr $0,15
-  mov $0,$15
-  sub $17,1
-  sub $0,$17
-  mov $12,$0
-  mov $14,$0
-  add $14,1
-  lpb $14
-    clr $0,12
-    mov $0,$12
-    sub $14,1
-    sub $0,$14
-    mov $9,$0
-    mov $11,$0
-    add $11,1
-    lpb $11
-      mov $0,$9
-      sub $11,1
-      sub $0,$11
-      add $1,7
-      mov $2,$1
-      lpb $2
-        mov $4,4
-        lpb $4
-          mov $2,1
-          mov $4,1
-          mov $6,6
-        lpe
-        mov $5,$0
-        div $7,$6
-        lpb $5
-          sub $5,$4
-          add $7,$5
-          add $7,5
-        lpe
-        trn $7,$4
-        clr $3,4
-        add $4,$7
-        add $4,8
-        mov $7,2
-      lpe
-      add $10,$4
-    lpe
-    add $13,$10
+mov $30,$0
+mov $32,$0
+add $32,1
+lpb $32
+  clr $0,30
+  mov $0,$30
+  sub $32,1
+  sub $0,$32
+  mov $27,$0
+  mov $29,$0
+  add $29,1
+  lpb $29
+    mov $0,$27
+    sub $29,1
+    sub $0,$29
+    add $0,1
+    cal $0,6416 ; Number of loopless rooted planar maps with 3 faces and n vertices and no isthmuses. Also a(n)=T(4,n-3), array T as in A049600.
+    mov $1,$0
+    sub $1,2
+    mov $3,2
+    add $3,$1
+    add $28,$3
   lpe
-  add $16,$13
+  add $31,$28
 lpe
-mov $1,$16
+mov $1,$31

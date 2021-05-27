@@ -8,8 +8,7 @@ lpb $3
   mov $0,$2
   sub $3,1
   sub $0,$3
-  cal $0,268727 ; One-based index of the toggled bit between n and A268717(n+1): a(n) = A070939(A003987(n,A268717(1+n))).
-  mov $4,$0
-  gcd $4,2
-  add $1,$4
+  cal $0,127245 ; Row sums of a signed Thue-Morse related triangle.
+  gcd $0,2
+  add $1,$0
 lpe

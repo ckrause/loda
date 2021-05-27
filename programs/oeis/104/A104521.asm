@@ -8,8 +8,13 @@ lpb $3
   sub $3,1
   add $0,$3
   sub $0,1
-  max $0,0
-  cal $0,286927 ; Positions of 1 in A286925; complement of A286926.
+  add $6,1
+  lpb $6
+    add $0,1
+    max $0,0
+    sub $6,1
+    cal $0,49473 ; Nearest integer to n/sqrt(2).
+  lpe
   mov $2,$3
   mov $5,$0
   sub $5,5
@@ -17,9 +22,6 @@ lpb $3
   mul $2,$5
   add $1,$2
 lpe
-min $4,1
-mul $4,$5
-sub $1,$4
-sub $1,4
-mod $1,2
-add $1,1
+min $5,1
+mul $5,$4
+sub $1,$5

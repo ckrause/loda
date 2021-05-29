@@ -6,17 +6,17 @@ mov $10,2
 lpb $10
   clr $0,8
   mov $0,$8
+  sub $10,1
+  add $0,$10
   sub $0,1
   mov $4,$0
   mov $6,2
-  sub $10,1
   lpb $6
     mov $0,$4
     sub $6,1
     add $0,$6
-    sub $0,1
     max $0,0
-    cal $0,122746 ; G.f.: 1/((1-2*x)*(1-2*x^2)).
+    cal $0,297619 ; a(n) = 2*a(n-1) + 2*a(n-2) - 4*a(n-3), a(1) = 0, a(2) = 0, a(3) = 8.
     mov $1,$0
     mov $7,$6
     mul $7,$0
@@ -26,8 +26,10 @@ lpb $10
   mul $4,$1
   mov $1,$5
   sub $1,$4
+  mov $11,$10
+  mul $11,$1
+  add $9,$11
 lpe
-min $8,1
-mul $8,$1
-mov $1,$8
+mov $1,$9
+div $1,8
 mul $1,2

@@ -6,6 +6,4 @@ lpb $0
   cal $2,85 ; Number of self-inverse permutations on n letters, also known as involutions; number of standard Young tableaux with n cells.
   sub $0,1
   add $1,$2
-  add $1,$2
 lpe
-div $1,2

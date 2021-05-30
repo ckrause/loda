@@ -4,6 +4,6 @@
 lpb $0
   mov $1,$0
   cal $1,100810 ; a(n) = 0 if prime(n) + 2 = prime(n+1), otherwise 1.
-  mov $0,0
+  mod $0,2
 lpe
 add $1,1

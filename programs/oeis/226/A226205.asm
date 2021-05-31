@@ -7,12 +7,9 @@ lpb $3
   mov $0,$5
   sub $3,1
   add $0,$3
-  sub $0,1
+  sub $0,2
   max $0,0
-  cal $0,71 ; a(n) = Fibonacci(n) - 1.
-  add $0,1
-  pow $0,2
-  mul $0,2
+  cal $0,206981 ; Number of nX2 0..1 arrays avoiding the patterns 0 1 0 or 1 0 1 in any row, column, diagonal or antidiagonal
   mov $2,$3
   mul $2,$0
   add $1,$2
@@ -21,4 +18,4 @@ lpe
 min $5,1
 mul $5,$4
 sub $1,$5
-div $1,2
+div $1,4

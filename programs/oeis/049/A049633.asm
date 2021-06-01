@@ -3,7 +3,8 @@
 
 cal $0,49697 ; a(n)=T(n,n+1), array T as in A049695.
 lpb $0
-  bin $0,2
+  sub $0,1
+  mul $0,19
 lpe
 mov $1,$0
 add $1,2

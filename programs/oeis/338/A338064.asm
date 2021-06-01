@@ -15,22 +15,23 @@ lpb $12
     mov $0,$6
     sub $8,1
     add $0,$8
-    sub $0,2
-    mov $2,1
+    sub $0,1
+    mul $0,2
+    mov $5,2
     lpb $0
-      sub $0,1
-      trn $0,1
-      add $2,2
+      sub $0,4
+      add $5,4
     lpe
-    mov $1,$2
+    mov $1,$5
     mov $9,$8
-    mul $9,$2
+    mul $9,$5
     add $7,$9
   lpe
   min $6,1
   mul $6,$1
   mov $1,$7
   sub $1,$6
+  div $1,2
   add $1,1
   add $11,$1
 lpe

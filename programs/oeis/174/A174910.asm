@@ -1,36 +1,36 @@
 ; A174910: Partial sums of A028835.
 ; 2,5,10,17,28,40,54,70,90,111,134,159,188,218,250,284,322,361,402,445,492,540,590,642,698,755,814,875,940,1006,1074,1144,1218,1293,1370,1449,1532,1616,1702,1790,1882,1975,2070,2167,2268,2370,2474,2580,2690,2801
 
-mov $30,$0
-mov $32,$0
-add $32,1
-lpb $32
-  clr $0,30
-  mov $0,$30
-  sub $32,1
-  sub $0,$32
-  mov $27,$0
-  mov $29,$0
-  add $29,1
-  lpb $29
-    mov $0,$27
-    sub $29,1
-    sub $0,$29
-    add $2,1
+mov $10,$0
+mov $12,$0
+add $12,1
+lpb $12
+  clr $0,10
+  mov $0,$10
+  sub $12,1
+  sub $0,$12
+  mov $7,$0
+  mov $9,$0
+  add $9,1
+  lpb $9
+    clr $0,7
+    mov $0,$7
+    sub $9,1
+    sub $0,$9
+    add $2,2
+    add $0,$2
+    add $4,2
     lpb $0
-      mov $2,$0
-      cal $2,118525 ; Start with 1 and repeatedly reverse the digits and add 6 to get the next term.
-      mov $26,$0
-      cmp $26,0
-      add $0,$26
-      mod $2,$0
-      add $0,1
-      trn $0,5
+      add $0,$4
+      sub $0,1
+      mul $0,$2
+      mod $0,8
     lpe
-    mov $1,$2
+    mov $1,$0
+    div $1,2
     add $1,1
-    add $28,$1
+    add $8,$1
   lpe
-  add $31,$28
+  add $11,$8
 lpe
-mov $1,$31
+mov $1,$11

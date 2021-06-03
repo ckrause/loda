@@ -3,9 +3,7 @@
 
 lpb $0
   mov $2,$0
-  cal $2,322982 ; If n is a noncomposite, then a(n) = 2*n - 1, otherwise a(n) = A032742(n), the largest proper divisor of n.
+  cal $2,117818 ; a(n) = n if n is 1 or a prime, otherwise a(n) = n divided by the least prime factor of n (A032742(n)).
   sub $0,$2
-  mov $3,$2
-  min $3,1
-  add $1,$3
+  add $1,1
 lpe

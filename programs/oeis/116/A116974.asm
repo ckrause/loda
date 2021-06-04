@@ -6,6 +6,6 @@ mov $2,2
 bin $2,$0
 mul $0,2
 max $0,1
+mov $1,$2
 cal $0,173919 ; Numbers that are prime or one less than a prime.
-add $0,$2
-mov $1,$0
+add $1,$0

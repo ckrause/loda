@@ -4,5 +4,4 @@
 cal $0,32925 ; Numbers whose set of base 4 digits is {1,2}.
 cal $0,1196 ; Double-bitters: only even length runs in binary expansion.
 mov $1,$0
-mul $1,13
-div $1,39
+div $1,3

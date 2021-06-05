@@ -3,5 +3,9 @@
 
 mul $0,2
 cal $0,82389 ; a(n) = floor((n+2)*phi) - floor((n+1)*phi) where phi=(1+sqrt(5))/2.
-sub $1,$0
-add $1,2
+lpb $0
+  mod $0,2
+  mov $1,336643
+lpe
+add $1,1
+mod $1,2

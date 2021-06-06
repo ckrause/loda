@@ -1,5 +1,6 @@
 #include "test.hpp"
 
+#include "blocks.hpp"
 #include "config.hpp"
 #include "generator_v1.hpp"
 #include "interpreter.hpp"
@@ -33,6 +34,7 @@ void Test::all()
   memory();
   config();
   steps();
+  blocks();
   collatz();
   linearMatcher();
   deltaMatcher();
@@ -288,6 +290,11 @@ void Test::steps()
   {
     Log::get().error( "unexpected number of steps: " + std::to_string( steps ), true );
   }
+}
+
+void Test::blocks()
+{
+  Log::get().info( "Testing blocks" );
 }
 
 void checkSeq( const Sequence& s, size_t expected_size, size_t index, number_t expected_value )

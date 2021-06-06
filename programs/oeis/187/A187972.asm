@@ -3,7 +3,4 @@
 
 add $0,4
 cal $0,188044 ; a(n) = [n*r] - [k*r] - [n*r-k*r], where r=sqrt(2), k=4, [ ]=floor.
-add $0,5
-div $0,2
-mov $1,$0
-sub $1,2
+add $1,$0

@@ -1,11 +1,7 @@
 ; A099618: a(n) = 1 if the n-th prime == 1 mod 6, otherwise a(n) = 0.
 ; 0,0,0,1,0,1,0,1,0,0,1,1,0,1,0,0,0,1,1,0,1,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,1,1,0,0,0,1,0,1,0,1,1,1,0,1,0,0,1,0,0,0,0,1,1,0,1,0,1,0,1,0,1,1,0,1,0,0,1,1,1,0,0,1,0,1,0,1,0,1,1,0,0,1,0,1,0,0,1,0,1,0,0,0,1,1,1,0,0,0,1
 
-sub $0,1
-max $0,0
-cal $0,98090 ; Numbers k such that 2k-3 is prime.
-sub $0,2
-gcd $0,262149
+cal $0,175216 ; The first nonprimes after the primes.
+cal $0,47261 ; Numbers that are congruent to {2, 4, 5} mod 6.
 mov $1,$0
-mul $1,2
-div $1,4
+mod $1,2

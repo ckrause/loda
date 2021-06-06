@@ -1,5 +1,10 @@
 #include "blocks.hpp"
 
+#include "parser.hpp"
+#include "program_util.hpp"
+
+#include <fstream>
+
 void Blocks::Interface::extend( const Operation& op )
 {
   auto& meta = Operation::Metadata::get( op.type );
@@ -36,23 +41,55 @@ void Blocks::Collector::add( const Program& p )
   Program block;
   for ( auto& op : p.ops )
   {
-    interface.extend( op );
-
+    if ( op.type == Operation::Type::LPE )
+    {
+      block.ops.push_back( op );
+    }
+    if ( op.type == Operation::Type::LPB || interface.all.size() > 3 ) // magic number
+    {
+      if ( !block.ops.empty() )
+      {
+        blocks[block]++;
+      }
+      block.ops.clear();
+      interface.clear();
+    }
+    if ( op.type != Operation::Type::LPE && op.type != Operation::Type::NOP )
+    {
+      block.ops.push_back( op );
+      interface.extend( op );
+    }
   }
 }
 
 Blocks Blocks::Collector::finalize()
 {
   Blocks result;
+  for ( auto it : blocks )
+  {
+    Operation nop( Operation::Type::NOP );
+    nop.comment = std::to_string( it.second );
+    result.blocks_list.ops.push_back( nop );
+    result.blocks_list.ops.insert( result.blocks_list.ops.end(), it.first.ops.begin(), it.first.ops.end() );
+  }
+  result.initRatesAndOffsets();
   return result;
 }
 
 void Blocks::load( const std::string &path )
 {
-
+  Parser parser;
+  blocks_list = parser.parse( path );
+  initRatesAndOffsets();
 }
 
 void Blocks::save( const std::string &path )
 {
+  std::ofstream out( path );
+  ProgramUtil::print( blocks_list, out );
+}
 
+void Blocks::initRatesAndOffsets()
+{
+  // TODO
 }

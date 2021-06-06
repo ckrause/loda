@@ -42,4 +42,13 @@ public:
 
 private:
 
+  friend class Collector;
+
+  void initRatesAndOffsets();
+
+  Program blocks_list;
+
+  std::vector<size_t> offsets;
+  std::vector<size_t> rates;
+
 };

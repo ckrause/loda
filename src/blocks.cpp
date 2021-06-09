@@ -41,11 +41,29 @@ void Blocks::Collector::add( const Program& p )
   Program block;
   for ( auto& op : p.ops )
   {
+    bool include_now = true;
+    bool next_block = false;
+    if ( op.type == Operation::Type::LPB )
+    {
+      include_now = false;
+      next_block = true;
+    }
     if ( op.type == Operation::Type::LPE )
+    {
+      next_block = true;
+    }
+    interface.extend( op );
+    if ( interface.all.size() > 3 ) // magic number
+    {
+      include_now = false;
+      next_block = true;
+    }
+
+    if ( include_now )
     {
       block.ops.push_back( op );
     }
-    if ( op.type == Operation::Type::LPB || interface.all.size() > 3 ) // magic number
+    if ( next_block )
     {
       if ( !block.ops.empty() )
       {
@@ -54,11 +72,16 @@ void Blocks::Collector::add( const Program& p )
       block.ops.clear();
       interface.clear();
     }
-    if ( op.type != Operation::Type::LPE && op.type != Operation::Type::NOP )
+    if ( !include_now )
     {
       block.ops.push_back( op );
-      interface.extend( op );
     }
+  }
+
+  // final block
+  if ( !block.ops.empty() )
+  {
+    blocks[block]++;
   }
 }
 
@@ -72,6 +95,7 @@ Blocks Blocks::Collector::finalize()
     result.blocks_list.ops.push_back( nop );
     result.blocks_list.ops.insert( result.blocks_list.ops.end(), it.first.ops.begin(), it.first.ops.end() );
   }
+  blocks.clear();
   result.initRatesAndOffsets();
   return result;
 }
@@ -87,6 +111,11 @@ void Blocks::save( const std::string &path )
 {
   std::ofstream out( path );
   ProgramUtil::print( blocks_list, out );
+}
+
+const Program& Blocks::getBlocksList() const
+{
+  return blocks_list;
 }
 
 void Blocks::initRatesAndOffsets()

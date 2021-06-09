@@ -40,6 +40,8 @@ public:
 
   void save( const std::string &path );
 
+  const Program& getBlocksList() const;
+
 private:
 
   friend class Collector;

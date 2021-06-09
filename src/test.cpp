@@ -294,7 +294,21 @@ void Test::steps()
 
 void Test::blocks()
 {
-  Log::get().info( "Testing blocks" );
+  auto tests = loadInOutTests( "tests/blocks/B" );
+  size_t i = 1;
+  Blocks::Collector collector;
+  for ( auto& t : tests )
+  {
+    Log::get().info( "Testing blocks " + std::to_string( i ) );
+    collector.add( t.first );
+    auto blocks = collector.finalize();
+    if ( blocks.getBlocksList() != t.second )
+    {
+      ProgramUtil::print( blocks.getBlocksList(), std::cerr );
+      Log::get().error( "Unexpected blocks output", true );
+    }
+    i++;
+  }
 }
 
 void checkSeq( const Sequence& s, size_t expected_size, size_t index, number_t expected_value )

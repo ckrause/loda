@@ -39,8 +39,15 @@ void Blocks::Collector::add( const Program& p )
 {
   interface.clear();
   Program block;
-  for ( auto& op : p.ops )
+  for ( auto op : p.ops )
   {
+    if ( op.type == Operation::Type::NOP )
+    {
+      continue;
+    }
+    op.comment.clear();
+
+    // decide whether and where to cut
     bool include_now = true;
     bool next_block = false;
     if ( op.type == Operation::Type::LPB )
@@ -59,6 +66,7 @@ void Blocks::Collector::add( const Program& p )
       next_block = true;
     }
 
+    // append to block and cut if needed
     if ( include_now )
     {
       block.ops.push_back( op );
@@ -67,9 +75,20 @@ void Blocks::Collector::add( const Program& p )
     {
       if ( !block.ops.empty() )
       {
-        blocks[block]++;
+        if ( block.ops.front().type == Operation::Type::LPB && block.ops.back().type != Operation::Type::LPE )
+        {
+          block.ops.erase( block.ops.begin(), block.ops.begin() + 1 );
+        }
+        if ( block.ops.back().type == Operation::Type::LPE && block.ops.front().type != Operation::Type::LPB )
+        {
+          block.ops.pop_back();
+        }
+        if ( !block.ops.empty() )
+        {
+          blocks[block]++;
+          block.ops.clear();
+        }
       }
-      block.ops.clear();
       interface.clear();
     }
     if ( !include_now )
@@ -98,6 +117,11 @@ Blocks Blocks::Collector::finalize()
   blocks.clear();
   result.initRatesAndOffsets();
   return result;
+}
+
+bool Blocks::Collector::empty() const
+{
+  return blocks.empty();
 }
 
 void Blocks::load( const std::string &path )

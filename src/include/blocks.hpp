@@ -1,3 +1,5 @@
+#pragma once
+
 #include "program.hpp"
 
 #include <map>
@@ -28,6 +30,8 @@ public:
     void add( const Program& p );
 
     Blocks finalize();
+
+    bool empty() const;
 
   private:
 

@@ -28,7 +28,7 @@ if [ ! -f $asinfo ]; then
   wget -nv --no-use-server-timestamps -O $asinfo http://www.teherba.org/OEIS-mat/common/asinfo.txt
 fi
 
-seqs=$(cat $asinfo | grep "_${author}_" | cut -f1)
+seqs=$(cat $asinfo | grep "${author}" | cut -f1)
 
 for s in $seqs; do
   p=programs/oeis/${s:1:3}/${s}.asm

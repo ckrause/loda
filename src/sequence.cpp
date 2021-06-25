@@ -1,16 +1,33 @@
 #include "sequence.hpp"
 
+#include "semantics.hpp"
+
 #include <sstream>
 #include <unordered_set>
 
-Sequence Sequence::subsequence( size_t start ) const
+Sequence::Sequence( const std::vector<int64_t> &s )
 {
-  return Sequence( std::vector<number_t>( begin() + start, end() ) );
+  const auto t = s.size();
+  resize( t );
+  for ( size_t i = 0; i < t; i++ )
+  {
+    (*this)[i] = Number( s[i] );
+  }
 }
 
 Sequence Sequence::subsequence( size_t start, size_t length ) const
 {
-  return Sequence( std::vector<number_t>( begin() + start, begin() + start + length ) );
+  Sequence s;
+  if ( start < size() && length > 0 )
+  {
+    const auto new_size = std::min( length, size() - start );
+    s.resize( new_size );
+    for ( size_t i = 0; i < new_size; i++ )
+    {
+      s[i] = (*this)[start + i];
+    }
+  }
+  return s;
 }
 
 bool Sequence::is_linear( size_t start ) const
@@ -19,10 +36,10 @@ bool Sequence::is_linear( size_t start ) const
   {
     return false;
   }
-  int64_t d = (*this)[start + 1] - (*this)[start];
+  auto d = Semantics::sub( (*this)[start + 1], (*this)[start] );
   for ( size_t i = start + 2; i < size(); ++i )
   {
-    if ( (*this)[i - 1] + d != (*this)[i] )
+    if ( Semantics::add( (*this)[i - 1], d ) != (*this)[i] )
     {
       return false;
     }
@@ -32,6 +49,7 @@ bool Sequence::is_linear( size_t start ) const
 
 size_t Sequence::distinct_values() const
 {
+  // ====== TODO =======================================================
   std::unordered_set<number_t> values;
   values.insert( begin(), end() );
   return values.size();
@@ -39,6 +57,7 @@ size_t Sequence::distinct_values() const
 
 number_t Sequence::min( bool includeNegative ) const
 {
+  // ====== TODO =======================================================
   number_t min = NUM_INF;
   number_t cur = 0;
   const size_t s = size();
@@ -55,6 +74,7 @@ number_t Sequence::min( bool includeNegative ) const
 
 void Sequence::add( number_t n )
 {
+  // ====== TODO =======================================================
   for ( size_t i = 0; i < size(); ++i )
   {
     (*this)[i] += n;
@@ -63,6 +83,7 @@ void Sequence::add( number_t n )
 
 void Sequence::sub( number_t n )
 {
+  // ====== TODO =======================================================
   for ( size_t i = 0; i < size(); ++i )
   {
     if ( (*this)[i] > n )
@@ -78,6 +99,7 @@ void Sequence::sub( number_t n )
 
 number_t Sequence::sum() const
 {
+  // ====== TODO =======================================================
   number_t sum = 0;
   for ( size_t x = 0; x < size(); x++ )
   {
@@ -88,6 +110,8 @@ number_t Sequence::sum() const
 
 bool Sequence::align( const Sequence &s, int64_t max_offset )
 {
+  // ====== TODO =======================================================
+
   // check if they agree on prefix already
   size_t min_length = std::min( size(), s.size() );
   bool agree = true;
@@ -141,6 +165,7 @@ bool Sequence::align( const Sequence &s, int64_t max_offset )
 
 bool Sequence::operator<( const Sequence &m ) const
 {
+  // ====== TODO =======================================================
   number_t length = size() < m.size() ? size() : m.size();
   for ( number_t i = 0; i < length; ++i )
   {
@@ -158,6 +183,7 @@ bool Sequence::operator<( const Sequence &m ) const
 
 bool Sequence::operator==( const Sequence &m ) const
 {
+  // ====== TODO =======================================================
   if ( size() != m.size() )
   {
     return false;
@@ -174,11 +200,13 @@ bool Sequence::operator==( const Sequence &m ) const
 
 bool Sequence::operator!=( const Sequence &m ) const
 {
+  // ====== TODO =======================================================
   return !((*this) == m);
 }
 
 std::ostream& operator<<( std::ostream &out, const Sequence &seq )
 {
+  // ====== TODO =======================================================
   for ( size_t i = 0; i < seq.size(); ++i )
   {
     if ( i > 0 ) out << ",";
@@ -189,6 +217,7 @@ std::ostream& operator<<( std::ostream &out, const Sequence &seq )
 
 std::string Sequence::to_string() const
 {
+  // ====== TODO =======================================================
   std::stringstream ss;
   ss << (*this);
   return ss.str();
@@ -196,6 +225,7 @@ std::string Sequence::to_string() const
 
 void SequenceToIdsMap::remove( Sequence seq, size_t id )
 {
+  // ====== TODO =======================================================
   auto ids = find( seq );
   if ( ids != end() )
   {

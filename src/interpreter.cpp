@@ -51,7 +51,7 @@ Interpreter::Interpreter( const Settings &settings )
 {
 }
 
-number_t Interpreter::calc( const Operation::Type type, number_t target, number_t source )
+Number Interpreter::calc( const Operation::Type type, const Number& target, const Number& source )
 {
   switch ( type )
   {
@@ -145,8 +145,8 @@ size_t Interpreter::run( const Program &p, Memory &mem )
   const size_t max_cycles = (settings.max_cycles >= 0) ? settings.max_cycles : std::numeric_limits<size_t>::max();
   Memory old_mem, frag, frag_prev, prev;
   size_t pc, pc_next, ps_begin;
-  number_t source = 0, target = 0;
-  number_t start, length, length2;
+  Number source, target;
+  int64_t start, length, length2;
   Operation lpb;
 
   // loop until stack is empty
@@ -170,13 +170,13 @@ size_t Interpreter::run( const Program &p, Memory &mem )
     }
     case Operation::Type::LPB:
     {
-      length = get( op.source, mem );
-      start = get( op.target, mem, true );
+      length = get( op.source, mem ).asInt();
+      start = get( op.target, mem, true ).asInt();
       if ( start == NUM_INF || length == NUM_INF )
       {
         throw std::runtime_error( "Infinite loop" );
       }
-      if ( length > (number_t) settings.max_memory )
+      if ( length > (int64_t) settings.max_memory )
       {
         throw std::runtime_error( "Maximum memory exceeded: " + std::to_string( length ) );
       }
@@ -204,8 +204,8 @@ size_t Interpreter::run( const Program &p, Memory &mem )
       length = frag_length_stack.top();
       frag_length_stack.pop();
 
-      start = get( lpb.target, mem, true );
-      length2 = get( lpb.source, mem );
+      start = get( lpb.target, mem, true ).asInt();
+      length2 = get( lpb.source, mem ).asInt();
 
       length = std::min( length, length2 );
 
@@ -229,15 +229,15 @@ size_t Interpreter::run( const Program &p, Memory &mem )
     {
       target = get( op.target, mem );
       source = get( op.source, mem );
-      auto result = call( source, target );
+      auto result = call( source.asInt(), target );
       set( op.target, result.first, mem, op );
       cycles += result.second;
       break;
     }
     case Operation::Type::CLR:
     {
-      length = get( op.source, mem );
-      start = get( op.target, mem, true );
+      length = get( op.source, mem ).asInt();
+      start = get( op.target, mem, true ).asInt();
       if ( length == NUM_INF )
       {
         mem.clear();
@@ -307,7 +307,7 @@ size_t Interpreter::run( const Program &p, Memory &mem )
   return cycles;
 }
 
-number_t Interpreter::get( Operand a, const Memory &mem, bool get_address ) const
+Number Interpreter::get( Operand a, const Memory &mem, bool get_address ) const
 {
   switch ( a.type )
   {
@@ -321,20 +321,21 @@ number_t Interpreter::get( Operand a, const Memory &mem, bool get_address ) cons
   }
   case Operand::Type::DIRECT:
   {
-    return get_address ? a.value : mem.get( a.value );
+    // TODO: use Number as operand value
+    return get_address ? Number( a.value ) : mem.get( a.value );
   }
   case Operand::Type::INDIRECT:
   {
-    return get_address ? mem.get( a.value ) : mem.get( mem.get( a.value ) );
+    return get_address ? mem.get( a.value ) : mem.get( mem.get( a.value ).asInt() );
   }
   }
   return
   {};
 }
 
-void Interpreter::set( Operand a, number_t v, Memory &mem, const Operation &last_op ) const
+void Interpreter::set( Operand a, const Number& v, Memory &mem, const Operation &last_op ) const
 {
-  number_t index = 0;
+  int64_t index = 0;
   switch ( a.type )
   {
   case Operand::Type::CONSTANT:
@@ -345,10 +346,10 @@ void Interpreter::set( Operand a, number_t v, Memory &mem, const Operation &last
     index = a.value;
     break;
   case Operand::Type::INDIRECT:
-    index = mem.get( a.value );
+    index = mem.get( a.value ).asInt();
     break;
   }
-  if ( index > (number_t) settings.max_memory )
+  if ( index > (int64_t) settings.max_memory )
   {
     throw std::runtime_error(
         "Maximum memory exceeded: " + std::to_string( index ) + "; last operation: "
@@ -491,7 +492,7 @@ std::pair<status_t, steps_t> Interpreter::check( const Program &p, const Sequenc
   return result;
 }
 
-std::pair<number_t, size_t> Interpreter::call( int64_t id, number_t arg )
+std::pair<Number, size_t> Interpreter::call( int64_t id, const Number& arg )
 {
   if ( arg < 0 )
   {
@@ -499,7 +500,7 @@ std::pair<number_t, size_t> Interpreter::call( int64_t id, number_t arg )
   }
 
   // check if already cached
-  std::pair<int64_t, number_t> key( id, arg );
+  std::pair<int64_t, Number> key( id, arg );
   auto it = terms_cache.find( key );
   if ( it != terms_cache.end() )
   {
@@ -516,7 +517,7 @@ std::pair<number_t, size_t> Interpreter::call( int64_t id, number_t arg )
   }
 
   // evaluate program
-  std::pair<number_t, size_t> result;
+  std::pair<Number, size_t> result;
   running_programs.insert( id );
   Memory tmp;
   tmp.set( Program::INPUT_CELL, arg );

@@ -5,16 +5,12 @@ mov $2,$0
 lpb $0
   mov $0,$2
   add $3,1
-  mov $26,$3
-  cmp $26,1
-  add $3,$26
+  mov $4,$3
+  cmp $4,1
+  add $3,$4
   div $0,$3
   sub $0,$3
-  add $7,2
-  lpb $7,6
-    add $1,$0
-    mov $8,$7
-    trn $7,4
-  lpe
+  add $1,$0
+  add $1,$0
 lpe
 mul $1,2

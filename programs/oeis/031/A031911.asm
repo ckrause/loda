@@ -3,6 +3,5 @@
 
 mul $0,7
 cal $0,6005 ; The odd prime numbers together with 1.
-sub $0,2
+mov $1,2
 max $1,$0
-add $1,2

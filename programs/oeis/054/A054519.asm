@@ -8,11 +8,7 @@ lpb $0
   add $3,1
   div $0,$3
   sub $0,$3
-  add $7,2
-  lpb $7,6
-    add $1,$0
-    mov $8,$7
-    trn $7,4
-  lpe
+  add $1,$0
+  add $1,$0
 lpe
 add $1,1

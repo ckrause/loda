@@ -3,5 +3,10 @@
 
 mul $0,2
 add $0,1
-cal $0,4086 ; Read n backwards (referred to as R(n) in many sequences).
-mov $1,$0
+lpb $0
+  mul $1,10
+  mov $2,$0
+  div $0,10
+  mod $2,10
+  add $1,$2
+lpe

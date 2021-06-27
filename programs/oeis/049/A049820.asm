@@ -9,12 +9,8 @@ lpb $0
   cmp $4,0
   add $0,$4
   dif $3,$0
-  cmp $3,$2
-  lpb $3
-    cmp $3,0
-    sub $3,$0
-  lpe
   sub $0,1
+  cmp $3,$2
   add $1,$3
 lpe
 sub $1,1

@@ -1,20 +1,6 @@
 #include "evaluator.hpp"
 
-#include "number.hpp"
-#include "oeis_sequence.hpp"
-#include "parser.hpp"
-#include "program.hpp"
-#include "program_util.hpp"
-#include "semantics.hpp"
-#include "sequence.hpp"
-
-#include <array>
-#include <exception>
-#include <fstream>
-#include <iostream>
 #include <sstream>
-#include <stack>
-#include <unistd.h>
 
 steps_t::steps_t()
     : min( 0 ),

@@ -4,9 +4,8 @@
 lpb $0
   sub $0,2
   mov $2,$0
-  mul $2,2
   max $2,0
-  cal $2,90860 ; Number of ways of 4-coloring a map in which there is a central circle surrounded by an annulus divided into n-1 regions. There are n regions in all.
+  cal $2,146882 ; a(n) = 5*(4^(n+1)-1)/3.
   add $1,$2
 lpe
-div $1,24
+div $1,5

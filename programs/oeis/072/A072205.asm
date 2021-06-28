@@ -3,8 +3,6 @@
 
 cal $0,6005 ; The odd prime numbers together with 1.
 bin $0,2
-mul $0,2
-sub $0,2
+sub $0,1
 max $1,$0
-div $1,2
 add $1,2

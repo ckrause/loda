@@ -3,12 +3,11 @@
 
 mov $1,$0
 lpb $0
-  mov $2,$0
-  lpb $2
-    mov $2,$0
-    mod $2,10
-    mul $1,$2
-    sub $2,1
-  lpe
+  mov $3,$0
   div $0,10
+  mod $3,10
+  mov $2,$3
+  cmp $2,0
+  add $3,$2
+  mul $1,$3
 lpe

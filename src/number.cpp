@@ -19,6 +19,34 @@ Number::Number( int64_t value )
 {
 }
 
+Number::Number( std::istream& in, bool is_big )
+{
+  load( in, is_big );
+}
+
+Number::Number( const std::string& s, bool is_big )
+{
+  std::stringstream buf( s );
+  load( buf, is_big );
+}
+
+void Number::load( std::istream& in, bool is_big )
+{
+  this->is_big = is_big;
+  if ( is_big )
+  {
+    throw std::runtime_error( "Bigint not supported yet" );
+  }
+  else
+  {
+    in >> value;
+    if ( value == std::numeric_limits<int64_t>::max() || value == std::numeric_limits<int64_t>::min() )
+    {
+      (*this) = Number::INF;
+    }
+  }
+}
+
 bool Number::operator==( const Number&n ) const
 {
   if ( is_big )
@@ -76,11 +104,6 @@ std::string Number::to_string() const
   std::stringstream ss;
   ss << (*this);
   return ss.str();
-}
-
-bool isCloseToOverflow( number_t n )
-{
-  return (n > (NUM_INF / 1000)) || (n < (NUM_INF / -1000));
 }
 
 number_t getPowerOf( number_t value, number_t base )

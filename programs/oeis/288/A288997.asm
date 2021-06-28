@@ -3,13 +3,10 @@
 
 add $0,4
 lpb $0
-  mov $2,$0
-  cal $2,82532 ; a(n) = n^2 - 2*floor(n/sqrt(2))^2.
-  sub $2,$0
-  mod $0,$2
+  mov $1,$0
+  cal $1,82532 ; a(n) = n^2 - 2*floor(n/sqrt(2))^2.
+  sub $1,$0
+  mod $0,$1
 lpe
-mov $0,$3
-sub $2,1
-sub $0,$2
-mov $1,$0
+add $1,1
 mod $1,2

@@ -10,4 +10,4 @@ lpb $0
   sub $0,$3
   add $1,$0
 lpe
-mul $1,4
+mul $1,2

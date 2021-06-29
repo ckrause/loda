@@ -24,6 +24,13 @@ void throwParseError( const std::string &line )
   Log::get().error( "error parsing OEIS line: " + line, true );
 }
 
+void throwParseError( int64_t num, std::istream& in )
+{
+  std::string line;
+  std::getline( in, line );
+  Log::get().error( "error parsing OEIS line " + std::to_string( num ) + ": " + line, true );
+}
+
 std::string getStatsHome()
 {
   // no trailing / here
@@ -98,71 +105,54 @@ void OeisManager::loadData()
   {
     Log::get().error( "OEIS data not found: " + path, true );
   }
-  std::string line;
-  size_t pos;
-  size_t id;
-  int64_t num, sign;
+  int64_t id, last_id = -1, line = 1;
   Sequence seq_full, seq_big;
+  std::string tmp;
 
   loaded_count = 0;
   total_count = 0;
 
-  while ( std::getline( stripped, line ) )
+  while ( stripped.peek() != EOF )
   {
-    if ( line.empty() || line[0] == '#' )
+    Log::get().info( std::to_string( line ) );
+    if ( stripped.peek() == '#' )
     {
+      std::getline( stripped, tmp );
       continue;
     }
-    if ( line[0] != 'A' )
+    if ( stripped.get() != 'A' )
     {
-      throwParseError( line );
+      throwParseError( line, stripped );
     }
     total_count++;
-    pos = 1;
-    id = 0;
-    for ( pos = 1; pos < line.length() && line[pos] >= '0' && line[pos] <= '9'; ++pos )
+    stripped >> id;
+    stripped >> std::ws;
+    if ( id <= last_id )
     {
-      id = (10 * id) + (line[pos] - '0');
+      throwParseError( line, stripped );
     }
-    if ( pos >= line.length() || line[pos] != ' ' || id == 0 )
+    last_id = id;
+    if ( stripped.get() != ',' )
     {
-      throwParseError( line );
+      throwParseError( line, stripped );
     }
-    ++pos;
-    if ( pos >= line.length() || line[pos] != ',' )
-    {
-      throwParseError( line );
-    }
-    ++pos;
-    num = 0;
-    sign = 1;
     seq_full.clear();
-    while ( pos < line.length() )
+    while ( stripped.peek() != '\n' )
     {
-      if ( line[pos] == ',' )
+      Number n( stripped, false );
+      if ( OeisSequence::isCloseToInf( n ) )
       {
-        seq_full.push_back( sign * num );
-        num = 0;
-        sign = 1;
+        std::getline( stripped, tmp );
+        break;
       }
-      else if ( line[pos] >= '0' && line[pos] <= '9' )
+      seq_full.push_back( n );
+      if ( stripped.get() != ',' )
       {
-        if ( OeisSequence::isCloseToInf( num ) )
-        {
-          break;
-        }
-        num = (10 * num) + (line[pos] - '0');
+        throwParseError( line, stripped );
       }
-      else if ( line[pos] == '-' )
-      {
-        sign = -1;
-      }
-      else
-      {
-        throwParseError( line );
-      }
-      ++pos;
     }
+    stripped >> std::ws;
+    line++;
 
     // check minimum number of terms
     if ( seq_full.size() < settings.num_terms )
@@ -176,6 +166,7 @@ void OeisManager::loadData()
       sequences.resize( 2 * id );
     }
     sequences[id] = OeisSequence( id, "", seq_full );
+    std::cout << sequences[id] << std::endl;
     loaded_count++;
   }
 }

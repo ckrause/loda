@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <random>
 #include <stdlib.h>
@@ -12,6 +13,10 @@ public:
   static const Number ZERO;
   static const Number ONE;
   static const Number INF;
+
+  static constexpr size_t NUM_WORDS = 4;
+  static constexpr size_t NUM_WORD_DIGITS = 18;
+  static constexpr uint64_t WORD_BASE = 1000000000000000000;
 
   Number();
 
@@ -44,5 +49,7 @@ private:
 
   int64_t value;
   bool is_big;
+  bool is_negative;
+  std::array<uint64_t, NUM_WORDS> words;
 
 };

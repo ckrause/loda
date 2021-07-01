@@ -1,5 +1,6 @@
 #include "number.hpp"
 
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -11,13 +12,15 @@ const Number Number::INF( NUM_INF);
 
 Number::Number()
     : value( 0 ),
-      is_big( false )
+      is_big( false ),
+      is_negative( false )
 {
 }
 
 Number::Number( int64_t value )
     : value( value ),
-      is_big( false )
+      is_big( false ),
+      is_negative( false ) // used only for bigint
 {
 }
 
@@ -26,7 +29,51 @@ Number::Number( const std::string& s, bool is_big )
 {
   if ( is_big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    int64_t size = s.length();
+    is_negative = (s[0] == '-');
+    size_t w = 0;
+    while ( true )
+    {
+      if ( (size <= 0) || (is_negative && size <= 1) )
+      {
+        break;
+      }
+      if ( w >= NUM_WORDS )
+      {
+        (*this) = Number::INF;
+        break;
+      }
+      int64_t length = 0;
+      uint64_t num = 0;
+      uint64_t prefix = 1;
+      for ( int64_t i = size - 1; i >= 0 && i >= size - static_cast<int64_t>( NUM_WORD_DIGITS ); --i )
+      {
+//        std::cout << "adding " << s[i] << std::endl;
+        if ( s[i] < '0' || s[i] > '9' )
+        {
+          break;
+        }
+        num += (s[i] - '0') * prefix;
+        prefix *= 10;
+        ++length;
+      }
+      words[w++] = num;
+      size -= length;
+
+      /*
+       std::cout << "parsed " << s << " to:" << std::endl;
+       for ( auto w : words )
+       {
+       std::cout << w << ",";
+
+       }
+       std::cout << std::endl;
+       */
+    }
+    while ( w < NUM_WORDS )
+    {
+      words[w++] = 0;
+    }
   }
   else
   {
@@ -100,9 +147,44 @@ std::ostream& operator<<( std::ostream &out, const Number &n )
 {
   if ( n.is_big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    /*    std::cout << "printing.. ";
+     for ( auto w : n.words )
+     {
+     std::cout << w << ",";
+
+     }
+     std::cout << std::endl;
+     */
+    if ( n.is_negative )
+    {
+      out << '-';
+    }
+    bool print = false;
+    char ch;
+    for ( size_t w = 0; w < Number::NUM_WORDS; w++ )
+    {
+      const auto word = n.words[Number::NUM_WORDS - w - 1];
+      auto base = Number::WORD_BASE / 10;
+      while ( base )
+      {
+        ch = static_cast<char>( '0' + ((word / base) % 10) );
+        print = print || (ch != '0');
+        if ( print )
+        {
+          out << ch;
+        }
+        base /= 10;
+      }
+    }
+    if ( !print )
+    {
+      out << '0';
+    }
   }
-  out << n.value;
+  else
+  {
+    out << n.value;
+  }
   return out;
 }
 

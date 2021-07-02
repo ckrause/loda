@@ -147,7 +147,7 @@ Number Number::negate() const
 {
   if ( big )
   {
-    throw std::runtime_error( "Bigint not supported for ==" );
+    throw std::runtime_error( "Bigint not supported for negate" );
   }
   if ( value == NUM_INF)
   {

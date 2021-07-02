@@ -61,7 +61,7 @@ Number Semantics::pow( const Number& base, const Number& exp )
     {
       return Number::ZERO; // 0^(positive number)
     }
-    else if ( Number::ZERO == exp )
+    else if ( exp == Number::ZERO )
     {
       return Number::ONE; // 0^0
     }
@@ -70,13 +70,13 @@ Number Semantics::pow( const Number& base, const Number& exp )
       return Number::INF; // 0^(negative number)
     }
   }
-  else if ( Number::ONE == base )
+  else if ( base == Number::ONE )
   {
     return Number::ONE; // 1^x is always 1
   }
-  else if ( Number::ONE.negate() == base )
+  else if ( base == -1 )
   {
-    return (Number::ZERO == mod( exp, 2 )) ? Number::ONE : Number::ONE.negate(); // (-1)^x
+    return (mod( exp, 2 ) == Number::ZERO) ? 1 : -1; // (-1)^x
   }
   else
   {

@@ -133,7 +133,7 @@ void Test::number()
   }
   testNumberDigitsSmall( 18, false );
   testNumberDigitsSmall( 18, true );
-  testNumberDigitsBig( (Number::NUM_WORDS * Number::NUM_WORD_DIGITS) - 1, false );
+  testNumberDigitsBig( 70, false );
 }
 
 void Test::semantics()

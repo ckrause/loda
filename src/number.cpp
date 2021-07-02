@@ -10,24 +10,14 @@ const Number Number::ZERO( 0 );
 const Number Number::ONE( 1 );
 const Number Number::INF( NUM_INF);
 
-Number::Number()
-    : value( 0 ),
-      is_big( false ),
-      is_negative( false )
+class BigNumber
 {
-}
+public:
+  static constexpr size_t NUM_WORDS = 10;
+  static constexpr size_t NUM_WORD_DIGITS = 18;
+  static constexpr uint64_t WORD_BASE = 1000000000000000000;
 
-Number::Number( int64_t value )
-    : value( value ),
-      is_big( false ),
-      is_negative( false ) // used only for bigint
-{
-}
-
-Number::Number( const std::string& s, bool is_big )
-    : is_big( is_big )
-{
-  if ( is_big )
+  bool parse( const std::string& s )
   {
     int64_t size = s.length();
     is_negative = (s[0] == '-');
@@ -38,17 +28,15 @@ Number::Number( const std::string& s, bool is_big )
       {
         break;
       }
-      if ( w >= NUM_WORDS )
+      if ( w >= BigNumber::NUM_WORDS )
       {
-        (*this) = Number::INF;
-        break;
+        return false;
       }
       int64_t length = 0;
       uint64_t num = 0;
       uint64_t prefix = 1;
-      for ( int64_t i = size - 1; i >= 0 && i >= size - static_cast<int64_t>( NUM_WORD_DIGITS ); --i )
+      for ( int64_t i = size - 1; i >= 0 && i >= size - static_cast<int64_t>( BigNumber::NUM_WORD_DIGITS ); --i )
       {
-//        std::cout << "adding " << s[i] << std::endl;
         if ( s[i] < '0' || s[i] > '9' )
         {
           break;
@@ -59,24 +47,72 @@ Number::Number( const std::string& s, bool is_big )
       }
       words[w++] = num;
       size -= length;
-
-      /*
-       std::cout << "parsed " << s << " to:" << std::endl;
-       for ( auto w : words )
-       {
-       std::cout << w << ",";
-
-       }
-       std::cout << std::endl;
-       */
     }
-    while ( w < NUM_WORDS )
+    while ( w < BigNumber::NUM_WORDS )
     {
       words[w++] = 0;
     }
+    return true;
   }
-  else
+
+  void print( std::ostream & out )
   {
+    if ( is_negative )
+    {
+      out << '-';
+    }
+    bool print = false;
+    char ch;
+    for ( size_t w = 0; w < BigNumber::NUM_WORDS; w++ )
+    {
+      const auto word = words[BigNumber::NUM_WORDS - w - 1];
+      auto base = BigNumber::WORD_BASE / 10;
+      while ( base )
+      {
+        ch = static_cast<char>( '0' + ((word / base) % 10) );
+        print = print || (ch != '0');
+        if ( print )
+        {
+          out << ch;
+        }
+        base /= 10;
+      }
+    }
+    if ( !print )
+    {
+      out << '0';
+    }
+  }
+
+  std::array<uint64_t, NUM_WORDS> words;
+  bool is_negative;
+};
+
+Number::Number()
+    : value( 0 ),
+      big( nullptr )
+{
+}
+
+Number::~Number()
+{
+  if ( big )
+  {
+    delete big;
+  }
+}
+
+Number::Number( int64_t value )
+    : value( value ),
+      big( nullptr )
+{
+}
+
+Number::Number( const std::string& s, bool is_big )
+{
+  if ( !is_big )
+  {
+    big = nullptr;
     bool is_inf = false;
     try
     {
@@ -95,13 +131,23 @@ Number::Number( const std::string& s, bool is_big )
       (*this) = Number::INF;
     }
   }
+  if ( is_big )
+  {
+    value = 0;
+    big = new BigNumber();
+    if ( !big->parse( s ) )
+    {
+      delete big;
+      (*this) = Number::INF;
+    }
+  }
 }
 
 bool Number::operator==( const Number&n ) const
 {
-  if ( is_big )
+  if ( big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    throw std::runtime_error( "Bigint not supported for ==" );
   }
   return value == n.value;
 }
@@ -113,18 +159,18 @@ bool Number::operator!=( const Number&n ) const
 
 bool Number::operator<( const Number&n ) const
 {
-  if ( is_big )
+  if ( big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    throw std::runtime_error( "Bigint not supported for <" );
   }
   return value < n.value;
 }
 
 int64_t Number::asInt() const
 {
-  if ( is_big )
+  if ( big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    throw std::runtime_error( "Bigint not supported for asInt" );
   }
   if ( (*this) == Number::INF )
   {
@@ -136,50 +182,18 @@ int64_t Number::asInt() const
 
 std::size_t Number::hash() const
 {
-  if ( is_big )
+  if ( big )
   {
-    throw std::runtime_error( "Bigint not supported yet" );
+    throw std::runtime_error( "Bigint not supported for hash" );
   }
   return value;
 }
 
 std::ostream& operator<<( std::ostream &out, const Number &n )
 {
-  if ( n.is_big )
+  if ( n.big )
   {
-    /*    std::cout << "printing.. ";
-     for ( auto w : n.words )
-     {
-     std::cout << w << ",";
-
-     }
-     std::cout << std::endl;
-     */
-    if ( n.is_negative )
-    {
-      out << '-';
-    }
-    bool print = false;
-    char ch;
-    for ( size_t w = 0; w < Number::NUM_WORDS; w++ )
-    {
-      const auto word = n.words[Number::NUM_WORDS - w - 1];
-      auto base = Number::WORD_BASE / 10;
-      while ( base )
-      {
-        ch = static_cast<char>( '0' + ((word / base) % 10) );
-        print = print || (ch != '0');
-        if ( print )
-        {
-          out << ch;
-        }
-        base /= 10;
-      }
-    }
-    if ( !print )
-    {
-      out << '0';
-    }
+    n.big->print( out );
   }
   else
   {

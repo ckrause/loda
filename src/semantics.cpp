@@ -59,11 +59,11 @@ Number Semantics::pow( const Number& base, const Number& exp )
   {
     if ( Number::ZERO < exp )
     {
-      return Number::ZERO; // 0^(positive number)
+      return 0; // 0^(positive number)
     }
     else if ( exp == Number::ZERO )
     {
-      return Number::ONE; // 0^0
+      return 1; // 0^0
     }
     else
     {
@@ -72,7 +72,7 @@ Number Semantics::pow( const Number& base, const Number& exp )
   }
   else if ( base == Number::ONE )
   {
-    return Number::ONE; // 1^x is always 1
+    return 1; // 1^x is always 1
   }
   else if ( base == -1 )
   {
@@ -82,7 +82,7 @@ Number Semantics::pow( const Number& base, const Number& exp )
   {
     if ( exp < Number::ZERO )
     {
-      return Number::ZERO;
+      return 0;
     }
     else
     {
@@ -148,14 +148,14 @@ Number Semantics::bin( const Number& nn, const Number& kk )
     }
     else
     {
-      return Number::ZERO;
+      return 0;
     }
   }
   if ( k < Number::ZERO || n < k ) // 1.2
   {
-    return Number::ZERO;
+    return 0;
   }
-  Number r = Number::ONE;
+  Number r( 1 );
   if ( n < mul( k, 2 ) )
   {
     k = sub( n, k );
@@ -179,7 +179,7 @@ Number Semantics::cmp( const Number& a, const Number& b )
   {
     return Number::INF;
   }
-  return (a == b) ? Number::ONE : Number::ZERO;
+  return (a == b) ? 1 : 0;
 }
 
 Number Semantics::min( const Number& a, const Number& b )
@@ -221,5 +221,5 @@ Number Semantics::getPowerOf( Number value, const Number& base )
     result++;
     value = div( value, base );
   }
-  return (value == Number::ONE) ? Number( result ) : Number::ZERO;
+  return (value == Number::ONE) ? result : 0;
 }

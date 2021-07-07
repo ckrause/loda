@@ -57,6 +57,7 @@ void Test::all()
   oeisSeq();
   iterator( tests );
   minimizer( tests );
+  miner();
 }
 
 Number read_num( const std::string &s )
@@ -760,6 +761,14 @@ void Test::minimizer( size_t tests )
       Log::get().error( "Program evaluated to different sequence after optimization", true );
     }
   }
+}
+
+void Test::miner()
+{
+  Log::get().info( "Testing miner" );
+  manager.load();
+  manager.getFinder();
+  MultiGenerator multi_generator( settings, manager.getStats(), 26 );
 }
 
 void Test::linearMatcher()

@@ -98,13 +98,13 @@ void testNumberDigits( int64_t num_digits, bool test_negative, bool is_big )
 void Test::number()
 {
   Log::get().info( "Testing number" );
-  if ( Number::ONE < Number::ZERO || !(Number::ZERO < Number::ONE) )
-  {
-    Log::get().error( "Basic number check failed", true );
-  }
   check_num( Number::ZERO, "0" );
   check_num( Number::ONE, "1" );
   check_inf( Number::INF );
+  if ( Number::ONE < Number::ZERO || !(Number::ZERO < Number::ONE) || !(Number::ONE < Number::INF) )
+  {
+    Log::get().error( "Basic number comparison check failed", true );
+  }
   check_num( std::numeric_limits<int64_t>::max(), std::to_string( std::numeric_limits<int64_t>::max() ) );
   check_num( std::numeric_limits<int64_t>::min(), std::to_string( std::numeric_limits<int64_t>::min() ) );
   testNumberDigits( 18, false, false );

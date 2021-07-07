@@ -98,7 +98,7 @@ bool Number::operator<( const Number&n ) const
 {
   if ( n.big == INF_PTR )
   {
-    return (n.big != INF_PTR);
+    return (big != INF_PTR);
   }
   if ( big == INF_PTR )
   {
